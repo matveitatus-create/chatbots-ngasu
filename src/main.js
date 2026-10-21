@@ -138,7 +138,10 @@ function frame(now) {
 
   warmupFrames--;
 
+  // Бот живой всегда: непрерывный рендер, пока есть сцена и не просили меньше движения
+  const idleAlive = motionOK && scene && !graphicsFailed;
   if (
+    idleAlive ||
     (motionOK && (Math.abs(displayed - target) > 5e-4 || now - strikeTime < 2800 || voice.speaking)) ||
     warmupFrames > 0
   ) {

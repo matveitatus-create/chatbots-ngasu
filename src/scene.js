@@ -70,6 +70,10 @@ function roundedRectShape(w, h, r) {
   return s;
 }
 
+/** Дефолты взгляда и «жизни» для update(). */
+const ZERO_GAZE = { x: 0, y: 0 };
+const ZERO_LIFE = { hum: 0, wiggle: 0, focus: false };
+
 function buildBot() {
   const root = new THREE.Group();
 
@@ -152,6 +156,8 @@ function buildBot() {
   for (const x of [-0.34, 0.34]) {
     const eye = new THREE.Mesh(eyeGeo, glowMat.clone());
     eye.position.set(x, 0.13, 1.0);
+    eye.userData.baseX = x;
+    eye.userData.baseY = 0.13;
     face.add(eye);
     eyes.push(eye);
   }
@@ -291,24 +297,38 @@ function buildBot() {
       shellMat.metalness = finish === 'graphite' ? 0.5 : 0.08;
     },
 
-    update(explode, energy, time, motion) {
+    update(explode, energy, time, motion, gaze = ZERO_GAZE, life = ZERO_LIFE) {
       // Разборка по осям
       face.position.z = explode * 1.0;
-      earL.position.x = earL.userData.baseX - explode * 0.55;
-      earR.position.x = earR.userData.baseX + explode * 0.55;
+      earL.position.x = earL.userData.baseX - explode * 0.55 - life.wiggle * Math.sin(time * 26) * 0.05;
+      earR.position.x = earR.userData.baseX + explode * 0.55 + life.wiggle * Math.sin(time * 26) * 0.05;
       antenna.position.y = explode * 0.6;
       neck.position.y = -explode * 0.5;
       halo.position.z = -0.35 - explode * 0.4;
       halo.rotation.z = time * 0.1;
 
-      const e = motion ? energy : 0;
+      // Взгляд: глаза, лицо и антенна следят за курсором, в простое — блуждают
+      for (const eye of eyes) {
+        eye.position.x = eye.userData.baseX + gaze.x * 0.075;
+        eye.position.y = eye.userData.baseY + gaze.y * 0.06;
+      }
+      face.rotation.y = gaze.x * 0.1;
+      face.rotation.x = -gaze.y * 0.07;
+      antenna.rotation.z = gaze.x * 0.22 + (motion ? Math.sin(time * 1.1) * 0.05 : 0);
+      antenna.rotation.x = -gaze.y * 0.18;
+      halo.rotation.y = gaze.x * 0.25;
 
-      // Моргание глаз
+      // В простое бот тихо «бубнит» сам с собой — рот-эквалайзер чуть дышит
+      const murmur = motion ? 0.05 + 0.04 * Math.sin(time * 0.9) : 0;
+      const e = Math.max(motion ? energy : 0, life.hum * 0.4, murmur);
+
+      // Моргание глаз (+ лёгкий прищур, когда смотрит на курсор)
       const blinkPhase = time % 3.9;
       const blink = blinkPhase < 0.25 ? Math.sin((blinkPhase / 0.25) * Math.PI) : 0;
+      const squint = life.focus ? 0.9 : 1;
       for (const eye of eyes) {
-        eye.scale.y = 1 - blink * 0.88;
-        eye.material.emissiveIntensity = 0.9 + e * 2.2;
+        eye.scale.y = (1 - blink * 0.88) * squint;
+        eye.material.emissiveIntensity = 0.9 + e * 2.2 + (life.focus ? 0.35 : 0);
       }
 
       // Рот-эквалайзер
@@ -322,7 +342,8 @@ function buildBot() {
       tip.material.emissiveIntensity = 0.8 + e * 2.5 + 0.35 * Math.sin(time * 2.4);
       tip.scale.setScalar(1 + e * 0.3 * Math.sin(time * 12));
       for (const ear of [earL, earR]) {
-        ear.userData.core.material.emissiveIntensity = 0.6 + e * 2 + 0.2 * Math.sin(time * 3);
+        ear.userData.core.material.emissiveIntensity =
+          0.6 + e * 2 + 0.2 * Math.sin(time * 3) + (life.focus ? 0.4 : 0);
       }
       led.material.emissiveIntensity = 0.7 + e * 2.5;
 
@@ -394,6 +415,17 @@ export function createScene(canvas) {
   let isMobile = false;
   const pointerState = { x: 0, y: 0 };
 
+  // «Мозг» бота: следит за курсором, а в простое живёт своей жизнью —
+  // блуждающий взгляд и случайные действия (подпрыгнуть, наклонить, побубнить…)
+  const brain = {
+    lastPointer: -1e9,
+    gaze: { x: 0, y: 0 },
+    wander: { x: 0, y: 0 },
+    wanderNext: 0,
+    action: null,
+    nextAction: 3000,
+  };
+
   function resize() {
     width = document.documentElement.clientWidth;
     height = innerHeight;
@@ -417,12 +449,61 @@ export function createScene(canvas) {
     const aspect = width / height;
     const fit = isMobile ? Math.min(1, width / 420) * (800 / height) : Math.min(1, aspect / 1.5);
 
+    // --- Взгляд и случайные действия ---
+    const nowMs = time * 1000;
+    const focus = motion && nowMs - brain.lastPointer < 2500;
+    if (motion && nowMs > brain.wanderNext) {
+      brain.wanderNext = nowMs + 1800 + Math.random() * 2600;
+      brain.wander.x = (Math.random() * 2 - 1) * 0.85;
+      brain.wander.y = (Math.random() * 2 - 1) * 0.55;
+    }
+    const gazeTarget = focus ? pointerState : brain.wander;
+    brain.gaze.x = lerp(brain.gaze.x, motion ? gazeTarget.x : 0, 0.07);
+    brain.gaze.y = lerp(brain.gaze.y, motion ? gazeTarget.y : 0, 0.07);
+
+    if (motion && nowMs > brain.nextAction) {
+      brain.nextAction = nowMs + 5000 + Math.random() * 8000;
+      const kinds = ['hop', 'tilt', 'hum', 'wiggle', 'look'];
+      brain.action = {
+        kind: kinds[(Math.random() * kinds.length) | 0],
+        start: nowMs,
+        dur: 900 + Math.random() * 1000,
+        dir: Math.random() < 0.5 ? -1 : 1,
+      };
+    }
+    let hop = 0;
+    let tilt = 0;
+    let hum = 0;
+    let wiggle = 0;
+    if (brain.action) {
+      const t = (nowMs - brain.action.start) / brain.action.dur;
+      if (t >= 1) {
+        brain.action = null;
+      } else {
+        const s = Math.sin(t * Math.PI);
+        if (brain.action.kind === 'hop') hop = s * 0.14;
+        else if (brain.action.kind === 'tilt') tilt = s * 0.1 * brain.action.dir;
+        else if (brain.action.kind === 'hum') hum = s;
+        else if (brain.action.kind === 'wiggle') wiggle = s;
+        else {
+          // «look» — резко заинтересовался и посмотрел в сторону
+          brain.wander.x = brain.action.dir;
+          brain.wander.y = brain.action.dir > 0 ? 0.4 : -0.3;
+          brain.wanderNext = nowMs + 1500;
+        }
+      }
+    }
+
+    // Дыхание и покачивание — бот живой, даже когда ничего не происходит
+    const sway = motion ? Math.sin(time * 0.8) * 0.02 : 0;
+    const breathe = motion ? 1 + Math.sin(time * 1.7) * 0.012 : 1;
+
     bot.root.position.set(
       p.x * (isMobile ? 1 : Math.min(1, aspect / 1.65)),
-      p.y + mobileShift,
+      p.y + mobileShift + hop + sway,
       0
     );
-    bot.root.scale.setScalar(p.scale * fit);
+    bot.root.scale.setScalar(p.scale * fit * breathe);
 
     // Слайдер поворота влияет рядом с главой 03, свет — рядом с главой 04
     const rotationMix = clamp01(1 - Math.abs(progress - 3));
@@ -431,12 +512,12 @@ export function createScene(canvas) {
     keyLight.position.set(Math.sin(angle) * 8, 5, Math.cos(angle) * 8);
 
     bot.root.rotation.set(
-      p.rx + (motion ? pointerState.y * 0.07 : 0),
-      p.ry + (rotation - Math.PI) * rotationMix + (motion ? pointerState.x * 0.13 : 0),
-      p.rz
+      p.rx + brain.gaze.y * 0.09,
+      p.ry + (rotation - Math.PI) * rotationMix + brain.gaze.x * 0.16,
+      p.rz + tilt + (motion ? Math.sin(time * 0.6) * 0.015 : 0)
     );
 
-    bot.update(p.explode, energy, time, motion);
+    bot.update(p.explode, energy, time, motion, brain.gaze, { hum, wiggle, focus });
     renderer.render(scene, camera);
   }
 
@@ -444,8 +525,9 @@ export function createScene(canvas) {
     resize,
     render,
     pointer(x, y) {
-      pointerState.x = lerp(pointerState.x, x, 0.3);
-      pointerState.y = lerp(pointerState.y, y, 0.3);
+      pointerState.x = x;
+      pointerState.y = y;
+      brain.lastPointer = performance.now();
     },
     setFinish: bot.setFinish,
     dispose() {
