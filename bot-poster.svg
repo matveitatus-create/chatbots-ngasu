@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+  <defs>
+    <radialGradient id="shell" cx="40%" cy="32%" r="80%">
+      <stop offset="0%" stop-color="#f2efe8"/>
+      <stop offset="60%" stop-color="#e9e6de"/>
+      <stop offset="100%" stop-color="#c4c1b8"/>
+    </radialGradient>
+    <radialGradient id="visor" cx="50%" cy="40%" r="75%">
+      <stop offset="0%" stop-color="#2a2d34"/>
+      <stop offset="100%" stop-color="#101216"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#7ea0ff"/>
+      <stop offset="100%" stop-color="#1f4fe0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- орбитальные кольца -->
+  <ellipse cx="300" cy="300" rx="252" ry="248" fill="none" stroke="#c9c9c4" stroke-width="2" opacity=".7"/>
+  <ellipse cx="300" cy="300" rx="276" ry="270" fill="none" stroke="#c9c9c4" stroke-width="1" opacity=".4"/>
+
+  <!-- антенна -->
+  <line x1="300" y1="86" x2="300" y2="140" stroke="#c9c9c4" stroke-width="9"/>
+  <circle cx="300" cy="76" r="14" fill="url(#glow)"/>
+
+  <!-- уши -->
+  <rect x="38" y="252" width="42" height="96" rx="20" fill="url(#shell)"/>
+  <rect x="520" y="252" width="42" height="96" rx="20" fill="url(#shell)"/>
+  <circle cx="66" cy="300" r="13" fill="url(#glow)"/>
+  <circle cx="534" cy="300" r="13" fill="url(#glow)"/>
+
+  <!-- голова -->
+  <circle cx="300" cy="300" r="215" fill="url(#shell)"/>
+  <circle cx="300" cy="300" r="215" fill="none" stroke="#b7b4aa" stroke-width="2"/>
+  <path d="M 128 244 A 208 208 0 0 1 472 244" fill="none" stroke="#c9c9c4" stroke-width="3" opacity=".8"/>
+
+  <!-- визор -->
+  <ellipse cx="300" cy="300" rx="150" ry="98" fill="url(#visor)"/>
+  <ellipse cx="300" cy="296" rx="150" ry="98" fill="none" stroke="#3a3d44" stroke-width="3"/>
+
+  <!-- глаза -->
+  <rect x="228" y="262" width="30" height="54" rx="15" fill="url(#glow)"/>
+  <rect x="342" y="262" width="30" height="54" rx="15" fill="url(#glow)"/>
+
+  <!-- рот-эквалайзер -->
+  <g fill="url(#glow)" opacity=".9">
+    <rect x="252" y="338" width="8" height="18" rx="4"/>
+    <rect x="268" y="334" width="8" height="26" rx="4"/>
+    <rect x="284" y="338" width="8" height="18" rx="4"/>
+    <rect x="300" y="332" width="8" height="30" rx="4"/>
+    <rect x="316" y="338" width="8" height="18" rx="4"/>
+    <rect x="332" y="336" width="8" height="22" rx="4"/>
+  </g>
+
+  <!-- шея и постамент -->
+  <rect x="252" y="508" width="96" height="14" rx="7" fill="#222422"/>
+  <rect x="244" y="522" width="112" height="14" rx="7" fill="#c9c9c4"/>
+  <ellipse cx="300" cy="556" rx="130" ry="26" fill="url(#shell)"/>
+  <ellipse cx="300" cy="548" rx="130" ry="24" fill="#dcd9d0"/>
+  <circle cx="300" cy="552" r="6" fill="url(#glow)"/>
+</svg>
