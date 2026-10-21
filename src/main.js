@@ -164,7 +164,15 @@ function onChapterChange(index) {
   navLinks.forEach((link, i) =>
     i === index ? link.setAttribute('aria-current', 'location') : link.removeAttribute('aria-current')
   );
+  // На мобайле навигация — горизонтальная лента: подводим текущую главу в центр.
+  const currentLink = navLinks[index];
+  const nav = currentLink?.closest('.chapter-nav');
+  if (nav && nav.scrollWidth > nav.clientWidth + 4) {
+    currentLink.scrollIntoView({ block: 'nearest', inline: 'center', behavior: motionOK ? 'smooth' : 'auto' });
+  }
   document.body.classList.toggle('dark-current', DARK_CHAPTERS.includes(index));
+  const chapterId = navLinks[index]?.getAttribute('href')?.slice(1);
+  if (chapterId) document.body.dataset.ch = chapterId;
   if (index === CHAT_CHAPTER) chat.greet();
   scheduleFrame();
 }

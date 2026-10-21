@@ -77,40 +77,55 @@ p { line-height: 1.6; }
 /* ============ Главы / пейджер ============ */
 .chapter {
   background-color: var(--ch-bg, var(--paper));
+  background-image: var(--ch-glow, none);
+  background-size: var(--ch-bg-size, auto);
   color: var(--ch-fg, var(--ink));
   min-height: 100svh; position: relative;
 }
 
 /* ============ Свой фон у каждого слайда ============ */
-#intro     { --ch-bg: #e8e3d9; background-image: radial-gradient(58% 46% at 72% 26%, rgba(31, 79, 224, .10), transparent 70%); }
-#actuality { --ch-bg: #eaeeda; background-image: radial-gradient(52% 44% at 78% 30%, rgba(146, 178, 84, .14), transparent 70%); }
-#tasks     { --ch-bg: #ece6f1; background-image: radial-gradient(52% 44% at 76% 32%, rgba(124, 92, 196, .13), transparent 70%); }
-#generations {
-  --ch-bg: #15182b; --ch-fg: #eeeae2;
-  background-image: radial-gradient(56% 46% at 70% 30%, rgba(95, 139, 255, .18), transparent 70%);
+/* Палитра живёт в переменных: её же использует подложка body::before на мобильных. */
+#intro, body[data-ch="intro"] {
+  --ch-bg: #e8e3d9; --ch-glow: radial-gradient(58% 46% at 72% 26%, rgba(31, 79, 224, .10), transparent 70%);
 }
-#stack {
+#actuality, body[data-ch="actuality"] {
+  --ch-bg: #eaeeda; --ch-glow: radial-gradient(52% 44% at 78% 30%, rgba(146, 178, 84, .14), transparent 70%);
+}
+#tasks, body[data-ch="tasks"] {
+  --ch-bg: #ece6f1; --ch-glow: radial-gradient(52% 44% at 76% 32%, rgba(124, 92, 196, .13), transparent 70%);
+}
+#generations, body[data-ch="generations"] {
+  --ch-bg: #15182b; --ch-fg: #eeeae2;
+  --ch-glow: radial-gradient(56% 46% at 70% 30%, rgba(95, 139, 255, .18), transparent 70%);
+}
+#stack, body[data-ch="stack"] {
   --ch-bg: #dfe8f4;
-  background-image:
+  --ch-glow:
     radial-gradient(50% 42% at 76% 30%, rgba(31, 79, 224, .12), transparent 70%),
     linear-gradient(rgba(31, 79, 224, .055) 1px, transparent 1px),
     linear-gradient(90deg, rgba(31, 79, 224, .055) 1px, transparent 1px);
-  background-size: auto, 44px 44px, 44px 44px;
+  --ch-bg-size: auto, 44px 44px, 44px 44px;
 }
-#bim       { --ch-bg: #dcece7; background-image: radial-gradient(52% 44% at 76% 30%, rgba(38, 142, 120, .14), transparent 70%); }
-#proptech  {
+#bim, body[data-ch="bim"] {
+  --ch-bg: #dcece7; --ch-glow: radial-gradient(52% 44% at 76% 30%, rgba(38, 142, 120, .14), transparent 70%);
+}
+#proptech, body[data-ch="proptech"] {
   --ch-bg: #1b231d; --ch-fg: #eeeae2;
-  background-image: radial-gradient(56% 46% at 70% 30%, rgba(74, 222, 128, .12), transparent 70%);
+  --ch-glow: radial-gradient(56% 46% at 70% 30%, rgba(74, 222, 128, .12), transparent 70%);
 }
-#practice  { --ch-bg: #f2e4d6; background-image: radial-gradient(52% 44% at 76% 30%, rgba(196, 106, 44, .14), transparent 70%); }
-#conclusion{ --ch-bg: #e6e3ef; background-image: radial-gradient(52% 44% at 76% 30%, rgba(96, 88, 180, .13), transparent 70%); }
-#thanks    {
+#practice, body[data-ch="practice"] {
+  --ch-bg: #f2e4d6; --ch-glow: radial-gradient(52% 44% at 76% 30%, rgba(196, 106, 44, .14), transparent 70%);
+}
+#conclusion, body[data-ch="conclusion"] {
+  --ch-bg: #e6e3ef; --ch-glow: radial-gradient(52% 44% at 76% 30%, rgba(96, 88, 180, .13), transparent 70%);
+}
+#thanks, body[data-ch="thanks"] {
   --ch-bg: #1f4fe0; --ch-fg: #f4f2ec;
-  background-image: radial-gradient(60% 50% at 70% 30%, rgba(255, 255, 255, .16), transparent 70%);
+  --ch-glow: radial-gradient(60% 50% at 70% 30%, rgba(255, 255, 255, .16), transparent 70%);
 }
-#demo      {
+#demo, body[data-ch="demo"] {
   --ch-bg: #171716; --ch-fg: #eeeae2;
-  background-image: radial-gradient(56% 46% at 70% 30%, rgba(95, 139, 255, .14), transparent 70%);
+  --ch-glow: radial-gradient(56% 46% at 70% 30%, rgba(95, 139, 255, .14), transparent 70%);
 }
 .scene-content { min-height: max(650px, 100dvh); padding: 90px var(--pad) 70px; position: relative; }
 
@@ -514,6 +529,19 @@ input[type="range"]::-moz-range-thumb {
 
 /* ============ Адаптив ============ */
 @media (max-width: 650px) {
+  /* Фон слайда уходит на подложку ПОД робота, а текст и карточки — НАД ним:
+     на узком экране бот больше не перекрывает содержимое слайда. */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: 1;
+    background-color: var(--ch-bg, var(--paper));
+    background-image: var(--ch-glow, none);
+    background-size: var(--ch-bg-size, auto);
+  }
+  html.paged .chapter {
+    background-color: transparent !important;
+    background-image: none !important;
+    z-index: 3;
+  }
   :root { --pad: 22px; }
   .header { top: 12px; }
   .wordmark { font-size: 27px; }
@@ -556,7 +584,9 @@ input[type="range"]::-moz-range-thumb {
   .steps-list li { font-size: 11px; padding-bottom: 6px; }
   .steps-list span { font-size: 9px; }
   .chips-row { max-width: none; margin-top: 18px; }
-  .chips-row span { font-size: 10px; padding: 6px 11px; }
+  /* Бот на мобайле рисуется под контентом: чипы делаем плотнее, чтобы светлый
+     текст не терялся на его белом корпусе. */
+  .chips-row span { font-size: 10px; padding: 6px 11px; background: #171716d9; }
   .detail-control, .surface-controls {
     width: calc(100% - var(--pad) * 2); bottom: 90px; max-width: 290px;
     left: 50%; transform: translate(-50%); border-radius: 20px; padding: 12px;
@@ -568,6 +598,8 @@ input[type="range"]::-moz-range-thumb {
     margin: 14px 0 24px;
   }
   .oversize-mark { bottom: 190px; right: var(--pad); font-size: 34vw; }
+  /* Заголовок демо уходит над головой бота — тень держит контраст. */
+  #demo-title { text-shadow: 0 2px 22px #171716b8, 0 1px 4px #17171680; }
   .finish-picker { margin-bottom: 12px; }
   .ping h2 { margin-top: 30px; font-size: clamp(40px, 12vw, 64px); }
   .ping h2 span { margin-left: 10vw; }
