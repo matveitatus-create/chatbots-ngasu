@@ -590,6 +590,8 @@ input[type="range"]::-moz-range-thumb {
   /* PropTech: свободная полоса между карточками и чипами — бот стоит там
      и не лезет на текст. */
   #proptech .chips-row { margin-top: 150px; }
+  /* Практика: заметка уходит в поток после карточек — ниже неё чистая зона бота. */
+  #practice .chapter-note { position: static; margin-top: 16px; }
   .detail-control, .surface-controls {
     width: calc(100% - var(--pad) * 2); bottom: 90px; max-width: 290px;
     left: 50%; transform: translate(-50%); border-radius: 20px; padding: 12px;

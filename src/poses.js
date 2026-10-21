@@ -37,8 +37,8 @@ const POSES_MOBILE = [
   [0, 0, 0.5, -0.05, Math.PI, 0, 0],
   [0, 0.05, 0.5, 0, -0.8, 0, 0],
   [0, -0.3, 0.42, -0.1, -0.5, -0.1, 0],
-  [0, -0.15, 0.55, -0.08, -0.6, -0.05, 0],
-  [0, -0.2, 0.55, -0.1, 0.2, 0.06, 0],
+  [0, -0.15, 0.36, -0.08, -0.6, -0.05, 0],
+  [0, -0.2, 0.48, -0.1, 0.2, 0.06, 0],
   [0, -0.1, 0.75, -0.2, 0.3, 0.08, 0],
   [0, 0.1, 0.45, 0, -0.35, 0, 0],
 ];
@@ -62,8 +62,8 @@ export function pose(progress, mobile = false) {
 export function mobileAnchor(progress, height) {
   const values = [
     height * 0.42, height * 0.76, height * 0.84, height * 0.52,
-    height * 0.73, height * 0.84, height * 0.75, height * 0.78,
-    height * 0.42, height * 0.58, 265,
+    height * 0.73, height * 0.84, height * 0.75, height * 0.85,
+    height * 0.46, height * 0.58, 265,
   ];
   const p = clamp(progress, 0, values.length - 1);
   const i = Math.min(values.length - 2, Math.floor(p));

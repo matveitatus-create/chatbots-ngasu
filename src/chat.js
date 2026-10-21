@@ -58,9 +58,60 @@ const want = (promise) =>
     return text;
   });
 
-/** Свободный вопрос → ИИ: локальный /api/ask и прямой запрос параллельно,
-    затем CORS-прокси тоже параллельно, пауза и финальная попытка. */
-async function askModel(question, personaId) {
+/** Стриминг Pollinations (POST /openai): отдаёт текст в onToken по мере генерации,
+    чтобы ответ начинал печататься через пару секунд, а не ждал целиком. */
+async function askStream(system, question, onToken) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 30000);
+  try {
+    const response = await fetch('https://text.pollinations.ai/openai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'openai',
+        private: true,
+        referrer: location.hostname,
+        stream: true,
+        messages: [
+          { role: 'system', content: system },
+          { role: 'user', content: question.slice(0, 300) },
+        ],
+      }),
+      signal: controller.signal,
+    });
+    if (!response.ok || !response.body) return null;
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let full = '';
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() ?? '';
+      for (const line of lines) {
+        const raw = line.trim();
+        if (!raw.startsWith('data:')) continue;
+        const data = raw.slice(5).trim();
+        if (!data || data === '[DONE]') continue;
+        try {
+          const delta = JSON.parse(data).choices?.[0]?.delta?.content;
+          if (delta) {
+            full += delta;
+            onToken(full.replace(/\s+/g, ' ').slice(0, 500));
+          }
+        } catch { /* обрывок JSON — дожидёмся следующий чанк */ }
+      }
+    }
+    full = full.trim().replace(/\s+/g, ' ').slice(0, 500);
+    return full || null;
+  } catch { return null; } finally { clearTimeout(timer); }
+}
+
+/** Свободный вопрос → ИИ: локальный /api/ask и стриминг параллельно,
+    затем прямой запрос и CORS-прокси, пауза и финальная попытка. */
+async function askModel(question, personaId, onToken = () => {}) {
   // Повторный вопрос отдаём из кэша мгновенно
   const cacheKey = `chatbots-answer:${personaId}:${question.trim().toLowerCase()}`;
   try {
@@ -96,9 +147,15 @@ async function askModel(question, personaId) {
   })();
 
   const answer =
-    (await Promise.any([want(local), want(fetchText(target, 15000))]).catch(() => null)) ??
-    // 3) Публичные CORS-прокси (запрос идёт с их сервера) — оба сразу
-    (await Promise.any(PROXIES.map((make) => want(fetchText(make(target), 20000)))).catch(() => null)) ??
+    (await Promise.any([
+      want(local),
+      want(askStream(system, question, onToken)),
+    ]).catch(() => null)) ??
+    // 3) Напрямую из браузера и публичные CORS-прокси — все сразу
+    (await Promise.any([
+      want(fetchText(target, 15000)),
+      ...PROXIES.map((make) => want(fetchText(make(target), 20000))),
+    ]).catch(() => null)) ??
     // 4) Бесплатный тир лимитирует по частоте — короткая пауза и финальная гонка
     ((await sleep(3000)),
     (await Promise.any([
@@ -183,11 +240,23 @@ export function createChat({ log, chips, form, input, onEvent, getPersona }) {
     const typingTicks = setInterval(() => onEvent('tick'), 320);
 
     const persona = getPersona();
-    const answer = (await askModel(question, persona.id)) ?? OFFLINE_ANSWER;
+    let live = null;
+    const answer =
+      (await askModel(question, persona.id, (text) => {
+        // Стриминг: заменяем «печатает» на живое сообщение с первыми токенами
+        if (!live) {
+          clearInterval(typingTicks);
+          typing.remove();
+          live = addMessage('', 'bot');
+        }
+        live.textContent = text;
+        scrollToEnd();
+      })) ?? OFFLINE_ANSWER;
 
     clearInterval(typingTicks);
     typing.remove();
-    addMessage(answer, 'bot');
+    if (live) live.textContent = answer;
+    else addMessage(answer, 'bot');
     onEvent('receive-text', answer);
     busy = false;
     setControlsEnabled(true);
