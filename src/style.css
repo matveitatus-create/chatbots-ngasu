@@ -587,6 +587,9 @@ input[type="range"]::-moz-range-thumb {
   /* Бот на мобайле рисуется под контентом: чипы делаем плотнее, чтобы светлый
      текст не терялся на его белом корпусе. */
   .chips-row span { font-size: 10px; padding: 6px 11px; background: #171716d9; }
+  /* PropTech: свободная полоса между карточками и чипами — бот стоит там
+     и не лезет на текст. */
+  #proptech .chips-row { margin-top: 150px; }
   .detail-control, .surface-controls {
     width: calc(100% - var(--pad) * 2); bottom: 90px; max-width: 290px;
     left: 50%; transform: translate(-50%); border-radius: 20px; padding: 12px;

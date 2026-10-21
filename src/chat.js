@@ -51,23 +51,22 @@ async function fetchText(url, timeoutMs) {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-/** Свободный вопрос → ИИ: локальный /api/ask → напрямую → CORS-прокси → повтор. */
+/** Превращает «пустой» результат в отказ, чтобы Promise.any ждал следующий ответ. */
+const want = (promise) =>
+  promise.then((text) => {
+    if (!text) throw new Error('empty');
+    return text;
+  });
+
+/** Свободный вопрос → ИИ: локальный /api/ask и прямой запрос параллельно,
+    затем CORS-прокси тоже параллельно, пауза и финальная попытка. */
 async function askModel(question, personaId) {
-  // 1) Локальный серверный прокси (vite dev / preview) — он сам ретраит лимиты
+  // Повторный вопрос отдаём из кэша мгновенно
+  const cacheKey = `chatbots-answer:${personaId}:${question.trim().toLowerCase()}`;
   try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 75000);
-    const response = await fetch(
-      `${ASK_URL}?persona=${personaId}&q=${encodeURIComponent(question)}`,
-      { signal: controller.signal }
-    );
-    clearTimeout(timer);
-    // На статическом хостинге /api/ask нет — придёт HTML без спец-заголовка
-    if (response.ok && response.headers.get('X-Chatbots-Api')) {
-      const text = (await response.text()).trim();
-      if (text) return text;
-    }
-  } catch { /* офлайн или статика — идём дальше */ }
+    const cached = sessionStorage.getItem(cacheKey);
+    if (cached) return cached;
+  } catch { /* хранилище недоступно — работаем без кэша */ }
 
   const system = PROMPTS[personaId] ?? PROMPTS.bot;
   const target = `https://text.pollinations.ai/${encodeURIComponent(
@@ -76,19 +75,41 @@ async function askModel(question, personaId) {
     location.hostname
   )}`;
 
-  // 2) Напрямую из браузера: сработает, если хост разрешён Pollinations
-  const direct = await fetchText(target, 20000);
-  if (direct) return direct;
+  // 1+2) Локальный серверный прокси и прямой запрос из браузера — гонка:
+  // на статике /api/ask отпадает сразу (404), локально обычно выигрывает он.
+  const local = (async () => {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 75000);
+      const response = await fetch(
+        `${ASK_URL}?persona=${personaId}&q=${encodeURIComponent(question)}`,
+        { signal: controller.signal }
+      );
+      clearTimeout(timer);
+      // На статическом хостинге /api/ask нет — придёт HTML без спец-заголовка
+      if (response.ok && response.headers.get('X-Chatbots-Api')) {
+        const text = (await response.text()).trim();
+        if (text) return text;
+      }
+    } catch { /* офлайн или статика — прямой запрос решит */ }
+    return null;
+  })();
 
-  // 3) Публичные CORS-прокси (запрос идёт с их сервера, без браузерного Origin)
-  for (const make of PROXIES) {
-    const text = await fetchText(make(target), 22000);
-    if (text) return text;
+  const answer =
+    (await Promise.any([want(local), want(fetchText(target, 15000))]).catch(() => null)) ??
+    // 3) Публичные CORS-прокси (запрос идёт с их сервера) — оба сразу
+    (await Promise.any(PROXIES.map((make) => want(fetchText(make(target), 20000)))).catch(() => null)) ??
+    // 4) Бесплатный тир лимитирует по частоте — короткая пауза и финальная гонка
+    ((await sleep(3000)),
+    (await Promise.any([
+      want(fetchText(target, 15000)),
+      want(fetchText(PROXIES[0](target), 20000)),
+    ]).catch(() => null)));
+
+  if (answer) {
+    try { sessionStorage.setItem(cacheKey, answer); } catch { /* без кэша */ }
   }
-
-  // 4) Бесплатный тир лимитирует по частоте — пауза и финальные попытки
-  await sleep(8000);
-  return (await fetchText(target, 20000)) ?? (await fetchText(PROXIES[0](target), 22000));
+  return answer;
 }
 
 export function createChat({ log, chips, form, input, onEvent, getPersona }) {

@@ -505,9 +505,9 @@ export function createScene(canvas) {
     );
     bot.root.scale.setScalar(p.scale * fit * breathe);
 
-    // Слайдер поворота влияет рядом с главой 03, свет — рядом с главой 04
-    const rotationMix = clamp01(1 - Math.abs(progress - 3));
-    const lightMix = clamp01(1 - Math.abs(progress - 4));
+    // Слайдер поворота живёт в главе 04 (стек), слайдер света — в 06 (PropTech)
+    const rotationMix = clamp01(1 - Math.abs(progress - 4));
+    const lightMix = clamp01(1 - Math.abs(progress - 6));
     const angle = (lerp(-35, lightAngle, lightMix) * Math.PI) / 180;
     keyLight.position.set(Math.sin(angle) * 8, 5, Math.cos(angle) * 8);
 
