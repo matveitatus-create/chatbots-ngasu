@@ -633,10 +633,10 @@ input[type="range"]::-moz-range-thumb {
 
 /* ============ Доступность ============ */
 @media (prefers-reduced-motion: reduce) {
-  *, :before, :after { transition: none !important; animation: none !important; }
+  *, :before, :after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
 }
 .motion-off *, .motion-off :before, .motion-off :after {
-  transition: none !important; animation: none !important;
+  transition: none !important; animation: none !important; scroll-behavior: auto !important;
 }
 
 .graphics-fallback .scene-status { bottom: 65px; }

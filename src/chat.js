@@ -232,6 +232,8 @@ export function createChat({ log, chips, form, input, onEvent, getPersona }) {
     if (busy) return;
     busy = true;
     setControlsEnabled(false);
+    // Инпут не гасим: иначе фокус и мобильная клавиатура слетают на время ответа
+    input.disabled = false;
 
     addMessage(question, 'user');
     onEvent('send');
