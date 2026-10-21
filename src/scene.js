@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
-import { clamp01, lerp, pose } from './poses.js';
+import { clamp01, lerp, pose, smoothstep } from './poses.js';
 
 /** Токарная поверхность из профиля [[радиус, высота], ...], ось — Z. */
 function lathe(points, material, segments = 128) {
@@ -407,6 +407,24 @@ export function createScene(canvas) {
   rimLight.position.set(-3, -2, 1);
   scene.add(rimLight);
 
+  // Свет по главам: цвет/интенсивность ключевого и контрового. Интерполируется
+  // между слайдами, поэтому сцена «переживает» переход, а не пересоздаётся.
+  const LIGHTS = [
+    { key: 0xfff6e7, keyI: 2.3, rim: 0xd2d9e1, rimI: 0.7, fillI: 1.5 }, // 00 бумага
+    { key: 0xfff3dc, keyI: 2.2, rim: 0xd8e0c8, rimI: 0.7, fillI: 1.5 }, // 01 олива
+    { key: 0xf6efff, keyI: 2.2, rim: 0xd9d2e8, rimI: 0.75, fillI: 1.4 }, // 02 фиалка
+    { key: 0xdfe6ff, keyI: 2.0, rim: 0x5f8bff, rimI: 1.0, fillI: 0.9 }, // 03 тёмно-синяя
+    { key: 0xf2f6ff, keyI: 2.3, rim: 0xc9d6f2, rimI: 0.8, fillI: 1.5 }, // 04 чертёж
+    { key: 0xeffff9, keyI: 2.2, rim: 0xcfe8df, rimI: 0.7, fillI: 1.5 }, // 05 мята
+    { key: 0xeaffe9, keyI: 1.9, rim: 0x4ade80, rimI: 0.9, fillI: 0.8 }, // 06 тёмно-зелёная
+    { key: 0xfff0e0, keyI: 2.3, rim: 0xe8d2c0, rimI: 0.7, fillI: 1.5 }, // 07 тёплая
+    { key: 0xf4f0ff, keyI: 2.2, rim: 0xd6d2e8, rimI: 0.75, fillI: 1.5 }, // 08 лаванда
+    { key: 0xffffff, keyI: 2.4, rim: 0xbfd0ff, rimI: 0.9, fillI: 1.6 }, // 09 синяя
+    { key: 0xf2f4ff, keyI: 1.9, rim: 0x5f8bff, rimI: 1.0, fillI: 0.8 }, // 10 тёмная
+  ];
+  const lightA = new THREE.Color();
+  const lightB = new THREE.Color();
+
   const bot = buildBot();
   scene.add(bot.root);
 
@@ -510,6 +528,17 @@ export function createScene(canvas) {
     const lightMix = clamp01(1 - Math.abs(progress - 6));
     const angle = (lerp(-35, lightAngle, lightMix) * Math.PI) / 180;
     keyLight.position.set(Math.sin(angle) * 8, 5, Math.cos(angle) * 8);
+
+    // Свет главы: ключ/контр/заполнение плавно между соседними слайдами
+    const lp = Math.min(LIGHTS.length - 1, Math.max(0, progress));
+    const la = LIGHTS[Math.floor(lp)];
+    const lb = LIGHTS[Math.min(LIGHTS.length - 1, Math.floor(lp) + 1)];
+    const lt = smoothstep(lp - Math.floor(lp));
+    keyLight.color.copy(lightA.setHex(la.key)).lerp(lightB.setHex(lb.key), lt);
+    keyLight.intensity = lerp(la.keyI, lb.keyI, lt);
+    rimLight.color.copy(lightA.setHex(la.rim)).lerp(lightB.setHex(lb.rim), lt);
+    rimLight.intensity = lerp(la.rimI, lb.rimI, lt);
+    fillLight.intensity = lerp(la.fillI, lb.fillI, lt);
 
     bot.root.rotation.set(
       p.rx + brain.gaze.y * 0.09,

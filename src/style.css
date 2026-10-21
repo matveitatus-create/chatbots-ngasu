@@ -66,6 +66,8 @@ p { line-height: 1.6; }
   width: 38vw; height: 7vh; position: absolute; top: 77%; left: 50%;
   transform: translate(-50%);
 }
+/* В тёмных главах контактная тень мягче и прозрачнее — свет «другой комнаты» */
+.dark-current .stage-shadow { filter: blur(10px); opacity: .55; }
 
 .scene-status {
   z-index: 10; bottom: 10px; left: var(--pad);
