@@ -13,8 +13,17 @@ console.log('SOUND:', await page.textContent('#sound-toggle'));
 
 // Свободный вопрос
 await page.fill('#chat-input', 'Расскажи шутку');
+const before = await page.evaluate(() => document.querySelectorAll('#chat-log .msg').length);
 await page.press('#chat-input', 'Enter');
-await page.waitForFunction(() => !document.querySelector('#chat-input').disabled, { timeout: 60000 });
+await page.waitForFunction(
+  (min) => {
+    const msgs = [...document.querySelectorAll('#chat-log .msg')];
+    const last = msgs[msgs.length - 1];
+    return msgs.length > min && !!last && !last.classList.contains('typing') && last.textContent.trim().length > 0;
+  },
+  before,
+  { timeout: 60000, polling: 500 }
+);
 console.log('ANSWER:', await page.evaluate(() => document.querySelector('#chat-log .msg.bot:last-child').textContent.slice(0, 100)));
 
 // Ждём начала воспроизведения (индикатор «говорит»)

@@ -39,8 +39,17 @@ await page.keyboard.press('Escape');
 await page.goto(SITE + '#demo', { waitUntil: 'networkidle', timeout: 60000 });
 await page.waitForTimeout(2500);
 await page.fill('#chat-input', 'Зачем боту RAG?');
+const before = await page.evaluate(() => document.querySelectorAll('#chat-log .msg').length);
 await page.press('#chat-input', 'Enter');
-await page.waitForFunction(() => !document.querySelector('#chat-input').disabled, { timeout: 170000, polling: 500 });
+await page.waitForFunction(
+  (min) => {
+    const msgs = [...document.querySelectorAll('#chat-log .msg')];
+    const last = msgs[msgs.length - 1];
+    return msgs.length > min && !!last && !last.classList.contains('typing') && last.textContent.trim().length > 0;
+  },
+  before,
+  { timeout: 170000, polling: 500 }
+);
 const msgs = await page.evaluate(() =>
   [...document.querySelectorAll('#chat-log .msg')].slice(-2).map((m) => m.textContent.slice(0, 140))
 );
