@@ -75,7 +75,43 @@ p { line-height: 1.6; }
 .scene-status:empty { display: none; }
 
 /* ============ Главы / пейджер ============ */
-.chapter { background: var(--paper); min-height: 100svh; position: relative; }
+.chapter {
+  background-color: var(--ch-bg, var(--paper));
+  color: var(--ch-fg, var(--ink));
+  min-height: 100svh; position: relative;
+}
+
+/* ============ Свой фон у каждого слайда ============ */
+#intro     { --ch-bg: #e8e3d9; background-image: radial-gradient(58% 46% at 72% 26%, rgba(31, 79, 224, .10), transparent 70%); }
+#actuality { --ch-bg: #eaeeda; background-image: radial-gradient(52% 44% at 78% 30%, rgba(146, 178, 84, .14), transparent 70%); }
+#tasks     { --ch-bg: #ece6f1; background-image: radial-gradient(52% 44% at 76% 32%, rgba(124, 92, 196, .13), transparent 70%); }
+#generations {
+  --ch-bg: #15182b; --ch-fg: #eeeae2;
+  background-image: radial-gradient(56% 46% at 70% 30%, rgba(95, 139, 255, .18), transparent 70%);
+}
+#stack {
+  --ch-bg: #dfe8f4;
+  background-image:
+    radial-gradient(50% 42% at 76% 30%, rgba(31, 79, 224, .12), transparent 70%),
+    linear-gradient(rgba(31, 79, 224, .055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(31, 79, 224, .055) 1px, transparent 1px);
+  background-size: auto, 44px 44px, 44px 44px;
+}
+#bim       { --ch-bg: #dcece7; background-image: radial-gradient(52% 44% at 76% 30%, rgba(38, 142, 120, .14), transparent 70%); }
+#proptech  {
+  --ch-bg: #1b231d; --ch-fg: #eeeae2;
+  background-image: radial-gradient(56% 46% at 70% 30%, rgba(74, 222, 128, .12), transparent 70%);
+}
+#practice  { --ch-bg: #f2e4d6; background-image: radial-gradient(52% 44% at 76% 30%, rgba(196, 106, 44, .14), transparent 70%); }
+#conclusion{ --ch-bg: #e6e3ef; background-image: radial-gradient(52% 44% at 76% 30%, rgba(96, 88, 180, .13), transparent 70%); }
+#thanks    {
+  --ch-bg: #1f4fe0; --ch-fg: #f4f2ec;
+  background-image: radial-gradient(60% 50% at 70% 30%, rgba(255, 255, 255, .16), transparent 70%);
+}
+#demo      {
+  --ch-bg: #171716; --ch-fg: #eeeae2;
+  background-image: radial-gradient(56% 46% at 70% 30%, rgba(95, 139, 255, .14), transparent 70%);
+}
 .scene-content { min-height: max(650px, 100dvh); padding: 90px var(--pad) 70px; position: relative; }
 
 .paged, .paged body { overscroll-behavior: none; height: 100%; overflow: hidden; }
@@ -135,7 +171,7 @@ p { line-height: 1.6; }
 .scroll-link:hover .scroll-icon { transform: translateY(4px); }
 
 /* ============ Тёмные главы ============ */
-.anatomy, .training, .demo { color: var(--paper); background: var(--ink); }
+/* Цвет и фон глав задаются переменными --ch-bg / --ch-fg (см. выше) */
 
 h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight: 700; line-height: .98; }
 
@@ -148,7 +184,7 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
 }
 .parts-list span { border-bottom: 1px solid #797974; width: 260px; padding-bottom: 10px; }
 
-.chapter-note { bottom: 32px; left: var(--pad); color: #bbb9b2; font-size: 10px; position: absolute; }
+.chapter-note { bottom: 32px; left: var(--pad); color: currentColor; opacity: .55; font-size: 10px; position: absolute; }
 
 .detail-control, .surface-controls { bottom: 70px; left: var(--pad); width: 280px; position: absolute; }
 /* На главе 04 слева карточки — панель материалов в свободный левый низ */
@@ -160,11 +196,10 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
 .pipeline input[type="range"] { accent-color: var(--ink); }
 
 .oversize-mark {
-  bottom: 15px; right: var(--pad); color: #d4cfc5; letter-spacing: -.06em;
+  bottom: 15px; right: var(--pad); color: currentColor; opacity: .08; letter-spacing: -.06em;
   pointer-events: none; font-family: "Anton", Impact, sans-serif; font-size: 22vw;
   line-height: 1; position: absolute;
 }
-.training .oversize-mark { color: #2a2c28; }
 
 /* ============ Карточки и статистика (глава 01) ============ */
 .cards-grid {
@@ -381,6 +416,7 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
 .text-link { align-items: center; padding: 13px 20px; display: inline-flex; }
 .parts-list span { border-bottom: 0; padding-bottom: 4px; }
 .steps-list li { border-bottom-color: #17171618; }
+.dark-current .steps-list li { border-bottom-color: #ffffff26; }
 
 .chat, .detail-control, .surface-controls, .card {
   border: 1px solid var(--glass-edge);

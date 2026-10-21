@@ -33,7 +33,7 @@ let finish = 'plastic';
 
 const PULSE_CHAPTER = 10;
 const CHAT_CHAPTER = 10;
-const DARK_CHAPTERS = [3, 6, 10];
+const DARK_CHAPTERS = [3, 6, 9, 10];
 
 const shadowEl = $('.stage-shadow');
 
