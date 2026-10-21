@@ -5,6 +5,7 @@ import { chromium } from 'playwright-core';
 const TARGET = process.argv[2] ?? 'http://localhost:4174/';
 const VIEWPORTS = [
   { name: '1440x900', width: 1440, height: 900 },
+  { name: '768x1024', width: 768, height: 1024 },
   { name: '390x844', width: 390, height: 844 },
 ];
 

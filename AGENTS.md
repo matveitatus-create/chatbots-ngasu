@@ -40,6 +40,10 @@ node scripts/test.mjs         # смоук: структура, главы, на
 node scripts/test-voice.mjs   # озвучка + переключение персонажей
 node scripts/test-ai.mjs      # свободные вопросы (ИИ + озвучка) локально
 node scripts/test-live.mjs    # задеплоенный сайт на статике
+node scripts/audit.mjs        # замеры: кегли, тач-таргеты, FPS, overflow (1440/768/390)
+node scripts/check-a11y.mjs   # клавиатура, фокус и демо-чат на мобильном
+node scripts/shots-chapters.mjs [id...]  # десктоп-скриншоты указанных глав
+node scripts/shot-og.mjs      # обложка og:image 1200x630 в public/og-cover.png
 ```
 
 Генерация озвучки (Python в `.venv`):
@@ -68,6 +72,10 @@ scripts/
   list-voices.mjs   — список голосов Edge TTS
   shots-mobile.mjs  — скриншоты мобильной вёрстки
   check-rotation.mjs— проверка слайдера «Поворот» (кадры 0°/180°/360°)
+  audit.mjs         — замеры дизайна (кегли/тач-таргеты/FPS/overflow)
+  check-a11y.mjs    — клавиатура, фокус, демо-чат на мобильном
+  shots-chapters.mjs— десктоп-скриншоты указанных глав
+  shot-og.mjs       — обложка og:image 1200x630 из живой сцены
   test*.mjs         — тесты (см. выше)
 vite.config.js      — мидлвари /api/tts (озвучка на лету) и /api/ask (прокси к ИИ)
 public/
@@ -105,6 +113,15 @@ public/
 - **3D-робот** — `src/scene.js`: `lathe()` (тела вращения), `ring()` (торы),
   `flatten()` (склейка мешей по материалу — меньше draw calls). Поза интерполируется
   между ключевыми кадрами через `pose()` из `poses.js` по прогрессу главы.
+  Свет тоже задаёт глава: пресеты `LIGHTS` (цвет/интенсивность ключевого и
+  контрового, заполнение) интерполируются между слайдами; контактная тень
+  `.stage-shadow` в тёмных главах мягче и прозрачнее.
+- **Типографика** — шкала 12/14/16/20/28/44 (+ Anton как display). Минимальный
+  кегль 12px везде, включая мобильный; `scripts/audit.mjs` следит за этим.
+- **Meta** — canonical, `og:*`, `twitter:*` в `index.html`; обложка
+  `public/og-cover.png` (1200x630) генерится `scripts/shot-og.mjs` из живой сцены.
+- **Футер** — блок «Другие проекты» в главе 10 (`index.html`, `.site-footer` в
+  `style.css`): то же стекло, что у карточек; акцент — только hover/focus.
 - **Демо-чат** — `src/chat.js`: чипы (`ANSWERS`), `WELCOME`, свободные вопросы.
   Цепочка: `/api/ask` (dev/preview) и прямой запрос из браузера — параллельно
   (гонка), затем CORS-прокси (allorigins, codetabs) тоже параллельно, короткая
