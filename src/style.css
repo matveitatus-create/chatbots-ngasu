@@ -155,6 +155,8 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
 .training .surface-controls { left: var(--pad); bottom: 22px; width: 260px; }
 .training .surface-controls .finish-picker { margin-bottom: 8px; }
 .training .surface-controls label { font-size: 10px; }
+.training .cards-grid { margin-top: 14px; }
+.training .chips-row { margin-top: 12px; }
 .pipeline input[type="range"] { accent-color: var(--ink); }
 
 .oversize-mark {
