@@ -40,7 +40,7 @@ p { line-height: 1.6; }
   justify-content: space-between; align-items: center; gap: 20px;
   transition: color .5s; display: flex; position: fixed; top: 18px;
 }
-.wordmark { letter-spacing: -2px; min-height: 44px; font-size: 30px; font-weight: 850; }
+.wordmark { letter-spacing: -2px; min-height: 44px; font-size: 28px; font-weight: 850; }
 
 .dark-current .header, .dark-current .chapter-nav { color: var(--paper); }
 
@@ -151,7 +151,7 @@ p { line-height: 1.6; }
 
 .section-label {
   justify-content: space-between; align-items: baseline;
-  gap: 16px; padding-top: 14px; font-size: 11px; display: flex;
+  gap: 16px; padding-top: 14px; font-size: 12px; display: flex;
 }
 .section-label a { align-items: center; min-height: 44px; margin-top: -14px; display: inline-flex; }
 
@@ -160,24 +160,24 @@ p { line-height: 1.6; }
   position: absolute; top: 50%; left: 12px;
   transform: translateY(-50%) rotate(180deg);
   writing-mode: vertical-rl;
-  font-size: 9px; letter-spacing: .32em; text-transform: uppercase;
+  font-size: 12px; letter-spacing: .24em; text-transform: uppercase;
   opacity: .45; pointer-events: none; white-space: nowrap;
 }
 
 /* ============ Интро ============ */
 .hero-meta {
   text-transform: uppercase; justify-content: space-between;
-  font-size: 10px; font-weight: 650; display: flex;
+  font-size: 12px; font-weight: 650; display: flex;
 }
 .hero-title {
   letter-spacing: -.015em; text-align: center; color: var(--accent); margin-top: 12px;
-  font-family: "Anton", Impact, sans-serif; font-size: 21vw; font-weight: 400; line-height: 1.05;
+  font-family: "Anton", Impact, sans-serif; font-size: clamp(56px, 21vw, 320px); font-weight: 400; line-height: 1.05;
 }
 .intro-bottom {
   left: var(--pad); right: var(--pad); justify-content: space-between;
   align-items: end; gap: 24px; display: flex; position: absolute; bottom: 40px;
 }
-.intro-copy { font-size: clamp(16px, 1.5vw, 23px); font-weight: 650; }
+.intro-copy { font-size: clamp(16px, 1.5vw, 20px); font-weight: 650; }
 .scroll-link { align-items: center; gap: 12px; min-height: 48px; font-size: 12px; display: flex; }
 .scroll-icon {
   border: 1px solid #76736b; border-radius: 50%; place-items: center;
@@ -191,7 +191,7 @@ p { line-height: 1.6; }
 h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight: 700; line-height: .98; }
 
 .anatomy-copy, .detail-copy { max-width: 46%; margin-top: 8vh; }
-.detail-copy p { max-width: 360px; margin-top: 24px; font-size: 13px; }
+.detail-copy p { max-width: 360px; margin-top: 24px; font-size: 14px; }
 
 .parts-list {
   flex-direction: column; align-items: start; gap: 12px;
@@ -199,13 +199,13 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
 }
 .parts-list span { border-bottom: 1px solid #797974; width: 260px; padding-bottom: 10px; }
 
-.chapter-note { bottom: 32px; left: var(--pad); color: currentColor; opacity: .55; font-size: 10px; position: absolute; }
+.chapter-note { bottom: 32px; left: var(--pad); color: currentColor; opacity: .55; font-size: 12px; position: absolute; }
 
 .detail-control, .surface-controls { bottom: 70px; left: var(--pad); width: 280px; position: absolute; }
 /* На главе 04 слева карточки — панель материалов в свободный левый низ */
 .training .surface-controls { left: var(--pad); bottom: 22px; width: 260px; }
 .training .surface-controls .finish-picker { margin-bottom: 8px; }
-.training .surface-controls label { font-size: 10px; }
+.training .surface-controls label { font-size: 12px; }
 .training .cards-grid { margin-top: 14px; }
 .training .chips-row { margin-top: 12px; }
 .pipeline input[type="range"] { accent-color: var(--ink); }
@@ -226,18 +226,18 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
   display: flex; flex-direction: column; gap: 6px;
   background: #ffffff30;
 }
-.card b { font-size: 13px; font-weight: 800; }
-.card span { font-size: 11px; line-height: 1.5; opacity: .75; }
+.card b { font-size: 14px; font-weight: 800; }
+.card span { font-size: 14px; line-height: 1.5; opacity: .75; }
 
 /* Титульник реферата на интро-сцене */
 .title-card { max-width: 470px; gap: 3px; padding: 14px 18px; backdrop-filter: blur(14px); }
-.title-card b { font-size: 12.5px; margin: 3px 0; }
-.title-card span { font-size: 10.5px; }
+.title-card b { font-size: 14px; margin: 3px 0; }
+.title-card span { font-size: 12px; }
 
 /* Кликабельные карточки/пункты — открывают полный текст из реферата */
 [data-doc] { cursor: pointer; }
 .card[data-doc] b::after { content: ' ↗'; font-size: .75em; opacity: .5; }
-.anatomy-sub { margin-top: 20px; max-width: 380px; font-size: 13px; line-height: 1.6; opacity: .75; }
+.anatomy-sub { margin-top: 20px; max-width: 380px; font-size: 14px; line-height: 1.6; opacity: .75; }
 @media (hover: hover) {
   .parts-list span[data-doc]:hover,
   .steps-list li[data-doc]:hover b { text-decoration: underline; text-underline-offset: 3px; }
@@ -250,9 +250,9 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
 .stat { display: flex; flex-direction: column; gap: 4px; max-width: 170px; }
 .stat b {
   font-family: "Anton", Impact, sans-serif; font-weight: 400;
-  font-size: clamp(28px, 3.2vw, 48px); line-height: 1; color: var(--accent);
+  font-size: clamp(28px, 3.2vw, 44px); line-height: 1; color: var(--accent);
 }
-.stat span { font-size: 10px; line-height: 1.5; opacity: .7; }
+.stat span { font-size: 12px; line-height: 1.5; opacity: .7; }
 
 /* ============ Шаги пайплайна (глава 03) ============ */
 .steps-list {
@@ -266,11 +266,11 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
 }
 .steps-list li::before {
   content: "0" counter(step);
-  font-family: "Anton", Impact, sans-serif; font-size: 15px; color: var(--accent);
+  font-family: "Anton", Impact, sans-serif; font-size: 16px; color: var(--accent);
   flex: none; width: 28px;
 }
 .steps-list b { font-weight: 800; flex: none; }
-.steps-list span { opacity: .7; font-size: 11px; }
+.steps-list span { opacity: .7; font-size: 12px; }
 
 /* ============ Чипы технологий (глава 04) ============ */
 .chips-row {
@@ -278,7 +278,7 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
 }
 .chips-row span {
   border: 1px solid #ffffff3d; border-radius: 999px;
-  padding: 7px 14px; font-size: 11px; opacity: .9;
+  padding: 7px 14px; font-size: 12px; opacity: .9;
   background: #ffffff12;
 }
 
@@ -296,14 +296,14 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
   bottom: 45px; left: var(--pad); right: var(--pad);
   align-items: center; gap: 22px; display: flex; position: absolute;
 }
-.pulse-bottom p { font-size: 11px; }
+.pulse-bottom p { font-size: 12px; }
 .pulse-bottom .text-link { margin-left: auto; }
 .strike-button {
   background: var(--ink); color: var(--paper); justify-content: space-between;
-  align-items: center; gap: 35px; padding: 14px 20px; font-size: 13px; display: flex;
+  align-items: center; gap: 35px; padding: 14px 20px; font-size: 14px; display: flex;
 }
 .strike-button:active { transform: scale(.97); }
-.text-link { border-bottom: 1px solid; min-height: 48px; padding: 14px 0; font-size: 13px; }
+.text-link { border-bottom: 1px solid; min-height: 48px; padding: 14px 0; font-size: 14px; }
 
 /* ============ Демо-чат (глава 06) ============ */
 .instrument-copy { max-width: 48%; margin-top: 4vh; }
@@ -314,7 +314,7 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
 }
 .chat-head {
   display: flex; align-items: center; gap: 8px;
-  padding-bottom: 10px; font-size: 11px;
+  padding-bottom: 10px; font-size: 12px;
 }
 .chat-dot { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; flex: none; }
 .chat-head.speaking .chat-dot { animation: .9s infinite dot-pulse; }
@@ -325,7 +325,7 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
 .chat-name { font-weight: 800; }
 .chat-online { opacity: .55; }
 .sound-toggle, .voice-toggle {
-  font-size: 10px; border: 1px solid #ffffff3d;
+  font-size: 12px; border: 1px solid #ffffff3d;
   border-radius: 999px; padding: 6px 12px; min-height: 32px; opacity: .85;
 }
 .sound-toggle { margin-left: auto; }
@@ -338,7 +338,7 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
 }
 .msg {
   max-width: 85%; padding: 9px 12px; border-radius: 14px;
-  font-size: 12px; line-height: 1.5; animation: .35s both msg-in;
+  font-size: 14px; line-height: 1.5; animation: .35s both msg-in;
 }
 @keyframes msg-in {
   0% { opacity: 0; transform: translateY(8px) scale(.97); }
@@ -359,7 +359,7 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
 .chat-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .chat-chips button {
   border: 1px solid #ffffff3d; border-radius: 999px;
-  padding: 8px 13px; font-size: 11px; min-height: 36px;
+  padding: 8px 13px; font-size: 12px; min-height: 36px;
   transition: background .2s, color .2s; background: #ffffff0d;
 }
 .chat-chips button:hover:not(:disabled) { background: var(--paper); color: var(--ink); }
@@ -380,7 +380,7 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
 }
 .chat-send:hover:not(:disabled) { background: var(--paper); color: var(--ink); }
 
-.chat-hint { color: #c2c0b8; margin-top: 12px; font-size: 10px; max-width: 360px; }
+.chat-hint { color: #c2c0b8; margin-top: 12px; font-size: 12px; max-width: 360px; }
 
 /* ============ Навигация по главам ============ */
 .chapter-nav {
@@ -389,7 +389,7 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
 }
 .chapter-nav a {
   justify-content: center; align-items: center;
-  min-width: 44px; height: 44px; font-size: 10px; display: flex;
+  min-width: 44px; height: 44px; font-size: 12px; display: flex;
 }
 .chapter-nav span { border-bottom: 2px solid #0000; padding: 4px 0; }
 .chapter-nav a[aria-current] span { border-color: currentColor; font-weight: 800; }
@@ -464,7 +464,7 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
   border-radius: 999px; gap: 0; padding: 3px;
   box-shadow: inset 0 1px #ffffff4d, 0 6px 24px #0002;
 }
-.chapter-nav a { border-radius: 50%; min-width: 36px; height: 36px; font-size: 9px; transition: background .2s, color .2s; }
+.chapter-nav a { border-radius: 50%; font-size: 12px; transition: background .2s, color .2s; }
 .chapter-nav span, .chapter-nav a[aria-current] span { border: 0; }
 .chapter-nav a[aria-current] { background: var(--glass-selected); color: var(--glass-selected-text); }
 
@@ -486,7 +486,7 @@ input[type="range"]::-moz-range-thumb {
 
 .range-row {
   grid-template-columns: 1fr 1fr; align-items: center;
-  margin-top: 2px; font-size: 11px; display: grid;
+  margin-top: 2px; font-size: 12px; display: grid;
 }
 .range-row output { text-align: right; font-variant-numeric: tabular-nums; }
 
@@ -515,8 +515,8 @@ input[type="range"]::-moz-range-thumb {
   0% { opacity: 0; transform: translateY(18px) scale(.97); }
   to { opacity: 1; transform: none; }
 }
-.doc-modal-window h3 { margin: 0 44px 14px 0; font-size: 19px; line-height: 1.25; letter-spacing: -.02em; }
-.doc-modal-body p { margin: 0 0 12px; font-size: 13px; line-height: 1.7; }
+.doc-modal-window h3 { margin: 0 44px 14px 0; font-size: 20px; line-height: 1.25; letter-spacing: -.02em; }
+.doc-modal-body p { margin: 0 0 12px; font-size: 14px; line-height: 1.7; }
 .doc-modal-close {
   position: absolute; top: 14px; right: 14px; width: 38px; height: 38px; min-height: 38px;
   border: 1px solid var(--glass-edge); border-radius: 50%;
@@ -524,7 +524,7 @@ input[type="range"]::-moz-range-thumb {
 }
 .doc-modal-source {
   display: block; margin-top: 14px; padding-top: 10px;
-  border-top: 1px solid #17171618; font-size: 10px; opacity: .55;
+  border-top: 1px solid #17171618; font-size: 12px; opacity: .55;
 }
 
 /* ============ Адаптив ============ */
@@ -544,15 +544,12 @@ input[type="range"]::-moz-range-thumb {
   }
   :root { --pad: 22px; }
   .header { top: 12px; }
-  .wordmark { font-size: 27px; }
   .scene-content { min-height: max(760px, 100dvh); padding-top: 76px; padding-bottom: 80px; }
-  .hero-meta { font-size: 9px; }
   .hero-meta span:last-child { display: none; }
   .hero-title { margin-top: 24px; font-size: 19vw; }
   .intro-bottom { flex-direction: column; align-items: start; gap: 18px; bottom: 88px; }
-  .intro-copy { font-size: 18px; }
-  .scroll-link { font-size: 11px; }
-  .section-label { padding-top: 13px; font-size: 10px; }
+  .intro-copy { font-size: 16px; }
+  .section-label { padding-top: 13px; }
   .section-label span:last-child { text-align: right; }
   .side-rail { display: none; }
   .chapter-nav {
@@ -560,33 +557,32 @@ input[type="range"]::-moz-range-thumb {
     max-width: calc(100vw - 20px); overflow-x: auto; scrollbar-width: none;
   }
   .chapter-nav::-webkit-scrollbar { display: none; }
-  .chapter-nav a { min-width: 40px; height: 40px; flex: none; }
+  .chapter-nav a { min-width: 44px; height: 44px; flex: none; }
   .doc-modal-window { padding: 20px 18px 16px; max-height: 76dvh; }
   .doc-modal-window h3 { font-size: 16px; }
   .doc-modal-body p { font-size: 12px; }
   .anatomy-copy, .detail-copy { max-width: none; margin-top: 26px; }
   h2 { font-size: clamp(38px, 10.5vw, 62px); }
-  .detail-copy p { max-width: 300px; margin-top: 18px; font-size: 11px; }
+  .detail-copy p { max-width: 300px; margin-top: 18px; }
   .cards-grid { grid-template-columns: 1fr 1fr; max-width: none; margin-top: 22px; gap: 8px; }
   .card { padding: 10px 12px; }
-  .card b { font-size: 11px; }
-  .card span { font-size: 9px; }
+  .card span { font-size: 12px; }
   .stats-row { bottom: 96px; gap: 16px; left: var(--pad); right: var(--pad); }
   .stat b { font-size: 24px; }
-  .stat span { font-size: 8px; }
+  .stat span { font-size: 12px; }
   .parts-list {
     bottom: 112px; left: var(--pad); right: var(--pad);
-    gap: 7px; margin: 0; font-size: 10px; position: absolute;
+    gap: 7px; margin: 0; position: absolute;
   }
   .parts-list span { width: 100%; padding-bottom: 7px; }
-  .chapter-note { font-size: 9px; bottom: 85px; }
+  .chapter-note { font-size: 12px; bottom: 85px; }
   .steps-list { max-width: none; margin-top: 20px; gap: 6px; }
-  .steps-list li { font-size: 11px; padding-bottom: 6px; }
-  .steps-list span { font-size: 9px; }
+  .steps-list li { font-size: 12px; padding-bottom: 6px; }
+  .steps-list span { font-size: 12px; }
   .chips-row { max-width: none; margin-top: 18px; }
   /* Бот на мобайле рисуется под контентом: чипы делаем плотнее, чтобы светлый
      текст не терялся на его белом корпусе. */
-  .chips-row span { font-size: 10px; padding: 6px 11px; background: #171716d9; }
+  .chips-row span { font-size: 12px; padding: 6px 11px; background: #171716d9; }
   /* PropTech: свободная полоса между карточками и чипами — бот стоит там
      и не лезет на текст. */
   #proptech .chips-row { margin-top: 150px; }
@@ -609,15 +605,15 @@ input[type="range"]::-moz-range-thumb {
   .ping h2 { margin-top: 30px; font-size: clamp(40px, 12vw, 64px); }
   .ping h2 span { margin-left: 10vw; }
   .pulse-bottom { flex-wrap: wrap; gap: 8px 12px; display: flex; bottom: 86px; }
-  .pulse-bottom p { max-width: 140px; font-size: 9px; }
-  .pulse-bottom .text-link { min-height: 44px; margin: 0; padding: 10px 16px; font-size: 11px; }
+  .pulse-bottom p { max-width: 140px; font-size: 12px; }
+  .pulse-bottom .text-link { min-height: 44px; margin: 0; padding: 10px 16px; font-size: 12px; }
   .strike-button { gap: 20px; padding: 12px; font-size: 12px; }
   .instrument-copy { max-width: none; margin-top: 20px; }
   .instrument-copy h2 { font-size: 38px; }
   .chat { width: 100%; max-width: 430px; margin: 150px auto 0; }
   .chat-log { height: 150px; }
   .chat-hint { text-align: center; max-width: none; padding: 0 12px; }
-  .scene-status { font-size: 10px; bottom: 66px; }
+  .scene-status { bottom: 66px; }
   .chapter-nav a[aria-current] {
     background: radial-gradient(circle, var(--glass-selected) 15px, transparent 16px);
   }
