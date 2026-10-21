@@ -4,6 +4,7 @@ import './style.css';
 import { SoundKit } from './audio.js';
 import { createChat } from './chat.js';
 import { createPager } from './pager.js';
+import { DOCS } from './docs.js';
 import { VoiceBox } from './voice.js';
 import { clamp01, lerp, mobileAnchor, pose } from './poses.js';
 
@@ -30,9 +31,9 @@ let lastFrame = 0;
 let warmupFrames = 4;
 let finish = 'plastic';
 
-const PULSE_CHAPTER = 5;
-const CHAT_CHAPTER = 6;
-const DARK_CHAPTERS = [2, 4, 6];
+const PULSE_CHAPTER = 10;
+const CHAT_CHAPTER = 10;
+const DARK_CHAPTERS = [3, 6, 10];
 
 const shadowEl = $('.stage-shadow');
 
@@ -227,14 +228,48 @@ $('#light').addEventListener('input', (event) => {
   scheduleFrame();
 });
 
-// --- Пинг ---
-$('#strike').addEventListener('click', () => {
-  poke(1);
-  sounds.ping();
-  $('#strike-status').textContent = motionOK
-    ? 'Пинг доставлен. Бот отвечает.'
-    : 'Анимация отключена настройкой уменьшения движения в системе.';
-});
+// --- Полный текст из реферата: клик по карточке/пункту открывает модалку ---
+const docModal = $('#doc-modal');
+if (docModal) {
+  const docTitle = $('#doc-modal-title');
+  const docBody = $('#doc-modal-body');
+  let lastTrigger = null;
+
+  const setModal = (open) => {
+    docModal.hidden = !open;
+    document.body.classList.toggle('modal-open', open);
+    if (open) {
+      $('.doc-modal-close')?.focus();
+    } else {
+      lastTrigger?.focus?.();
+    }
+    scheduleFrame();
+  };
+
+  document.addEventListener('click', (event) => {
+    const trigger = event.target.closest('[data-doc]');
+    if (trigger) {
+      const doc = DOCS[trigger.dataset.doc];
+      if (!doc) return;
+      lastTrigger = trigger;
+      docTitle.textContent = doc.title;
+      docBody.replaceChildren(
+        ...doc.paragraphs.map((text) => {
+          const p = document.createElement('p');
+          p.textContent = text;
+          return p;
+        })
+      );
+      setModal(true);
+      return;
+    }
+    if (event.target.closest('[data-close]')) setModal(false);
+  });
+
+  addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !docModal.hidden) setModal(false);
+  });
+}
 
 addEventListener('resize', resize, { passive: true });
 addEventListener('pointermove', (event) => {
@@ -256,9 +291,8 @@ document.addEventListener('visibilitychange', () => {
 function failGraphics(message) {
   graphicsFailed = true;
   document
-    .querySelectorAll('.detail-control input, .surface-controls input, .surface-controls button, #strike')
+    .querySelectorAll('.detail-control input, .surface-controls input, .surface-controls button')
     .forEach((el) => { el.disabled = true; });
-  $('#strike-status').textContent = 'Для пинга нужна работающая 3D-сцена.';
   document.body.classList.add('graphics-fallback');
   try { scene?.dispose(); } catch { /* уже мёртв */ }
   scene = null;

@@ -54,12 +54,16 @@ async function newPage(width, height) {
   await page.waitForTimeout(1000);
   console.log('AFTER WHEEL hash:', await page.evaluate(() => location.hash));
 
-  // переход на пинг и клик «Отправить пинг»
-  await page.goto(BASE + '/#ping', { waitUntil: 'networkidle' });
-  await page.waitForTimeout(1500);
-  await page.click('#strike');
+  // слайд «Задачи»: клик по карточке открывает модалку с полным текстом реферата
+  await page.goto(BASE + '/#tasks', { waitUntil: 'networkidle' });
+  await page.waitForTimeout(1200);
+  await page.click('[data-doc="object"]');
+  await page.waitForTimeout(400);
+  console.log('MODAL VISIBLE:', await page.isVisible('.doc-modal-window'));
+  console.log('MODAL TITLE:', await page.textContent('#doc-modal-title'));
+  await page.keyboard.press('Escape');
   await page.waitForTimeout(300);
-  console.log('STRIKE STATUS:', await page.textContent('#strike-status'));
+  console.log('MODAL CLOSED:', !(await page.isVisible('.doc-modal-window')));
 
   // демо-чат: клик по чипу, ждём ответ
   await page.goto(BASE + '/#demo', { waitUntil: 'networkidle' });
@@ -80,8 +84,8 @@ async function newPage(width, height) {
   await page.waitForTimeout(800);
   console.log('AFTER END hash:', await page.evaluate(() => location.hash));
 
-  // слайдер поворота на главе 03
-  await page.goto(BASE + '/#pipeline', { waitUntil: 'networkidle' });
+  // слайдер поворота на главе 04 (стек)
+  await page.goto(BASE + '/#stack', { waitUntil: 'networkidle' });
   await page.waitForTimeout(1200);
   await page.locator('#rotation').fill('90');
   console.log('ROTATION OUT:', await page.textContent('#rotation-value'));

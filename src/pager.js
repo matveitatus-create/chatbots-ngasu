@@ -119,6 +119,7 @@ export function createPager(chapters, onChange) {
   });
 
   addEventListener('wheel', (event) => {
+    if (document.body.classList.contains('modal-open')) return; // модалка: не листаем главы
     if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
     const delta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? innerHeight : 1);
     if (canScrollNatively(event.target, delta)) {
@@ -131,6 +132,7 @@ export function createPager(chapters, onChange) {
   }, { passive: false });
 
   document.addEventListener('keydown', (event) => {
+    if (document.body.classList.contains('modal-open')) return; // модалка: Esc обрабатывает main.js
     if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
     if (event.target.closest?.('input,textarea,select,button,[contenteditable=true]')) return;
     const dir = ['ArrowDown', 'PageDown', ' '].includes(event.key)
@@ -147,6 +149,7 @@ export function createPager(chapters, onChange) {
   });
 
   document.addEventListener('touchstart', (event) => {
+    if (document.body.classList.contains('modal-open')) { touch = null; return; }
     if (event.touches.length !== 1 || event.target.closest('input,textarea,select,[contenteditable=true]')) {
       touch = null;
       return;

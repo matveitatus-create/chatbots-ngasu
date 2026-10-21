@@ -38,20 +38,48 @@ async function askHandler(req, res) {
     return;
   }
   try {
-    // Бесплатный тир Pollinations ограничен по частоте — до трёх попыток с паузой
+    // Бесплатный тир Pollinations ограничен по частоте — до трёх попыток с паузой.
+    // Основной путь — быстрый POST /openai (OpenAI-формат), запасной — Classic GET.
     let lastStatus = 0;
     for (let attempt = 1; attempt <= 3; attempt++) {
-      const apiUrl = `https://text.pollinations.ai/${encodeURIComponent(q)}?model=openai&system=${encodeURIComponent(persona)}`;
-      const apiRes = await fetch(apiUrl, { signal: AbortSignal.timeout(40000) });
-      lastStatus = apiRes.status;
-      if (apiRes.ok) {
-        const text = (await apiRes.text()).trim().replace(/\s+/g, ' ').slice(0, 500);
+      let text = '';
+      let status = 0;
+      try {
+        const postRes = await fetch('https://text.pollinations.ai/openai', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'openai',
+            messages: [
+              { role: 'system', content: persona },
+              { role: 'user', content: q },
+            ],
+            private: true,
+          }),
+          signal: AbortSignal.timeout(40000),
+        });
+        status = postRes.status;
+        if (postRes.ok) {
+          const data = await postRes.json();
+          text = (data?.choices?.[0]?.message?.content ?? '').trim();
+        }
+      } catch { /* POST не удался — пробуем Classic GET */ }
+
+      if (!text) {
+        const apiUrl = `https://text.pollinations.ai/${encodeURIComponent(q)}?model=openai&system=${encodeURIComponent(persona)}&referrer=localhost`;
+        const apiRes = await fetch(apiUrl, { signal: AbortSignal.timeout(40000) });
+        status = apiRes.status;
+        if (apiRes.ok) text = (await apiRes.text()).trim();
+      }
+
+      lastStatus = status;
+      if (text) {
         res.setHeader('Content-Type', 'text/plain; charset=utf-8');
         res.setHeader('X-Chatbots-Api', '1');
-        res.end(text || 'пусто');
+        res.end(text.replace(/\s+/g, ' ').slice(0, 500));
         return;
       }
-      if (lastStatus !== 402 && lastStatus !== 429) throw new Error(`pollinations ${lastStatus}`);
+      if (lastStatus !== 402 && lastStatus !== 429 && lastStatus !== 0) throw new Error(`pollinations ${lastStatus}`);
       await new Promise((r) => setTimeout(r, 6000));
     }
     throw new Error(`pollinations ${lastStatus} after retries`);

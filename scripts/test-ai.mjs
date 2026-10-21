@@ -1,4 +1,4 @@
-// Тест свободных вопросов: ввод → ИИ (Pollinations) → ответ в характере персонажа
+﻿// Тест свободных вопросов: ввод → ИИ (Pollinations) → ответ в характере персонажа
 // → озвучка через локальный /api/tts (Edge TTS).
 import { chromium } from 'playwright-core';
 
@@ -23,8 +23,8 @@ await page.press('#chat-input', 'Enter');
 await page.waitForTimeout(1200);
 console.log('TYPING SHOWN:', await page.evaluate(() => !!document.querySelector('.msg.typing')));
 
-// Ждём ответ ИИ (до 50 с)
-await page.waitForFunction(() => !document.querySelector('#chat-input').disabled, { timeout: 50000 });
+// Ждём ответ ИИ (бесплатный тир Pollinations может тормозить — до 150 с)
+await page.waitForFunction(() => !document.querySelector('#chat-input').disabled, { timeout: 150000, polling: 500 });
 let msgs = await page.evaluate(() => [...document.querySelectorAll('#chat-log .msg')].map((m) => `${m.className.replace('msg ', '')}: ${m.textContent.slice(0, 90)}`));
 console.log('LOG AFTER AI (bot):', JSON.stringify(msgs, null, 1));
 
@@ -32,7 +32,7 @@ console.log('LOG AFTER AI (bot):', JSON.stringify(msgs, null, 1));
 await page.click('#voice-toggle');
 await page.fill('#chat-input', 'Как дела?');
 await page.press('#chat-input', 'Enter');
-await page.waitForFunction(() => !document.querySelector('#chat-input').disabled, { timeout: 50000 });
+await page.waitForFunction(() => !document.querySelector('#chat-input').disabled, { timeout: 150000, polling: 500 });
 msgs = await page.evaluate(() => [...document.querySelectorAll('#chat-log .msg')].slice(-2).map((m) => `${m.className.replace('msg ', '')}: ${m.textContent.slice(0, 90)}`));
 console.log('LOG AFTER AI (toxis):', JSON.stringify(msgs, null, 1));
 console.log('CHAT NAME:', await page.textContent('.chat-name'));
