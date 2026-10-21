@@ -384,6 +384,36 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
 
 .chat-hint { color: #c2c0b8; margin-top: 12px; font-size: 12px; max-width: 360px; }
 
+/* ============ Футер: другие проекты ============ */
+.site-footer {
+  margin: 34px 60px 0 0; padding: 16px;
+  border: 1px solid var(--glass-edge);
+  background: linear-gradient(145deg, var(--glass-highlight), transparent 45%), var(--glass-base);
+  color: var(--glass-text);
+  border-radius: 20px;
+  box-shadow: inset 0 1px #ffffff14, 0 6px 18px #00000014;
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  backdrop-filter: blur(18px) saturate(1.2);
+}
+.footer-title {
+  margin: 0 0 12px; font-size: 12px; font-weight: 650;
+  letter-spacing: .24em; text-transform: uppercase; opacity: .55;
+}
+.footer-grid { grid-template-columns: 1fr 1fr; gap: 12px; display: grid; }
+.footer-card {
+  border: 1px solid #ffffff1f; background: #ffffff0d; color: inherit;
+  border-radius: 16px; padding: 14px 16px; display: block;
+  transition: transform .2s, border-color .2s;
+}
+.footer-card b {
+  justify-content: space-between; align-items: center; gap: 10px;
+  font-size: 14px; font-weight: 800; display: flex;
+}
+.footer-card b::after { content: "↗"; font-weight: 400; opacity: .55; transition: color .2s, opacity .2s; }
+.footer-card span { margin-top: 6px; font-size: 12px; line-height: 1.5; opacity: .75; display: block; }
+.footer-card:hover, .footer-card:focus-visible { border-color: var(--accent); transform: translateY(-2px); }
+.footer-card:hover b::after, .footer-card:focus-visible b::after { color: var(--accent); opacity: 1; }
+
 /* ============ Навигация по главам ============ */
 .chapter-nav {
   z-index: 7; gap: 2px; transition: color .5s; display: grid;
@@ -615,6 +645,8 @@ input[type="range"]::-moz-range-thumb {
   .chat { width: 100%; max-width: 430px; margin: 150px auto 0; }
   .chat-log { height: 150px; }
   .chat-hint { text-align: center; max-width: none; padding: 0 12px; }
+  .site-footer { margin: 24px 0 0; padding: 12px; }
+  .footer-grid { grid-template-columns: 1fr; }
   .scene-status { bottom: 66px; }
   .chapter-nav a[aria-current] {
     background: radial-gradient(circle, var(--glass-selected) 15px, transparent 16px);
