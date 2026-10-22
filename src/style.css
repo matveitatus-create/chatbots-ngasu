@@ -565,6 +565,17 @@ input[type="range"]::-moz-range-thumb {
   .chat { width: min(420px, 58%); }
 }
 
+/* Низкий экран (телефон ландшафтно): навигация вниз, как на мобайле,
+   иначе вертикальная колонка точек не влезает по высоте */
+@media (max-height: 600px) and (min-width: 651px) {
+  .chapter-nav {
+    gap: 0; display: flex; inset: auto auto 12px 50%; transform: translate(-50%);
+    max-width: calc(100vw - 20px); overflow-x: auto; scrollbar-width: none;
+  }
+  .chapter-nav::-webkit-scrollbar { display: none; }
+  .chapter-nav a { flex: none; }
+}
+
 @media (max-width: 650px) {
   /* Фон слайда уходит на подложку ПОД робота, а текст и карточки — НАД ним:
      на узком экране бот больше не перекрывает содержимое слайда. */
@@ -599,10 +610,10 @@ input[type="range"]::-moz-range-thumb {
   .doc-modal-window h3 { font-size: 16px; }
   .doc-modal-body p { font-size: 12px; }
   .anatomy-copy, .detail-copy { max-width: none; margin-top: 26px; }
-  h2 { font-size: clamp(38px, 10.5vw, 62px); }
+  h2 { font-size: clamp(32px, 10.5vw, 62px); overflow-wrap: anywhere; }
   .detail-copy p { max-width: 300px; margin-top: 18px; }
   .cards-grid { grid-template-columns: 1fr 1fr; max-width: none; margin-top: 22px; gap: 8px; }
-  .card { padding: 10px 12px; }
+  .card { padding: 10px 12px; min-width: 0; overflow-wrap: anywhere; }
   .card span { font-size: 12px; }
   .stats-row { bottom: 96px; gap: 16px; left: var(--pad); right: var(--pad); }
   .stat b { font-size: 24px; }
@@ -614,7 +625,7 @@ input[type="range"]::-moz-range-thumb {
   .parts-list span { width: 100%; padding-bottom: 7px; }
   .chapter-note { font-size: 12px; bottom: 85px; }
   .steps-list { max-width: none; margin-top: 20px; gap: 6px; }
-  .steps-list li { font-size: 12px; padding-bottom: 6px; }
+  .steps-list li { font-size: 12px; padding-bottom: 6px; flex-wrap: wrap; }
   .steps-list span { font-size: 12px; }
   .chips-row { max-width: none; margin-top: 18px; }
   /* Бот на мобайле рисуется под контентом: чипы делаем плотнее, чтобы светлый
