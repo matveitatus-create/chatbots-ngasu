@@ -5,9 +5,11 @@ const TARGET = process.argv[2] ?? 'http://localhost:4174/';
 const IDS = process.argv.slice(3);
 const LIST = IDS.length ? IDS : ['generations', 'proptech', 'thanks'];
 const OUT = 'C:/Users/user/AppData/Local/Temp/opencode';
+const W = Number(process.env.VW ?? 1280);
+const H = Number(process.env.VH ?? 800);
 
 const browser = await chromium.launch({ channel: 'chrome', args: ['--enable-unsafe-swiftshader'] });
-const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+const page = await browser.newPage({ viewport: { width: W, height: H } });
 const errors = [];
 page.on('pageerror', (e) => errors.push(String(e)));
 await page.goto(TARGET, { waitUntil: 'networkidle' });
