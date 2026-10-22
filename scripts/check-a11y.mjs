@@ -43,6 +43,27 @@ for (const vp of [
   }
   console.log('TAB ORDER:', tabStops.join(' → '));
 
+  // Модалка: Tab не выходит за её пределы, Esc возвращает фокус на карточку
+  if (vp.width === 1440) {
+    await page.evaluate(() => { location.hash = '#tasks'; });
+    await page.waitForTimeout(700);
+    // Открываем модалку с клавиатуры: фокус на карточку + Enter
+    await page.focus('[data-doc="object"]');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(400);
+    const inModal = [];
+    for (let i = 0; i < 5; i += 1) {
+      await page.keyboard.press('Tab');
+      inModal.push(await page.evaluate(() => document.activeElement?.closest('#doc-modal') !== null));
+    }
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+    const back = await page.evaluate(
+      () => document.activeElement?.getAttribute('data-doc') ?? document.activeElement?.tagName
+    );
+    console.log('MODAL TAB INSIDE:', inModal.every(Boolean), '| FOCUS BACK:', back);
+  }
+
   // Демо-чат на мобильном: фокус и скролл не ломаются
   if (vp.width === 390) {
     await page.evaluate(() => { location.hash = '#demo'; });

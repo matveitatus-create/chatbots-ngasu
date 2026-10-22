@@ -19,7 +19,7 @@ button, input { font: inherit; color: inherit; }
 button { cursor: pointer; background: 0 0; border: 0; min-height: 44px; }
 button, a { touch-action: manipulation; }
 button:disabled, input:disabled { cursor: not-allowed; opacity: .5; }
-button:focus-visible, a:focus-visible, input:focus-visible { outline-offset: 5px; outline: 2px solid; }
+button:focus-visible, a:focus-visible, input:focus-visible, [data-doc]:focus-visible { outline-offset: 5px; outline: 2px solid; }
 .chat :is(button, input):focus-visible { outline-color: var(--paper); }
 .chapter:focus { outline: none; }
 

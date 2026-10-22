@@ -249,6 +249,11 @@ if (docModal) {
   const setModal = (open) => {
     docModal.hidden = !open;
     document.body.classList.toggle('modal-open', open);
+    // Фокус-ловушка: фон страницы inert, пока модалка открыта (Tab не уходит за её пределы)
+    for (const el of document.body.children) {
+      if (el === docModal || el.tagName === 'SCRIPT') continue;
+      el.inert = open;
+    }
     if (open) {
       $('.doc-modal-close')?.focus();
     } else {
@@ -257,24 +262,59 @@ if (docModal) {
     scheduleFrame();
   };
 
+  const openDoc = (trigger) => {
+    const doc = DOCS[trigger.dataset.doc];
+    if (!doc) return;
+    lastTrigger = trigger;
+    docTitle.textContent = doc.title;
+    docBody.replaceChildren(
+      ...doc.paragraphs.map((text) => {
+        const p = document.createElement('p');
+        p.textContent = text;
+        return p;
+      })
+    );
+    setModal(true);
+  };
+
+  // Карточки, открывающие модалку, доступны с клавиатуры как кнопки
+  for (const el of document.querySelectorAll('[data-doc]')) {
+    el.setAttribute('role', 'button');
+    el.tabIndex = 0;
+  }
+
   document.addEventListener('click', (event) => {
     const trigger = event.target.closest('[data-doc]');
     if (trigger) {
-      const doc = DOCS[trigger.dataset.doc];
-      if (!doc) return;
-      lastTrigger = trigger;
-      docTitle.textContent = doc.title;
-      docBody.replaceChildren(
-        ...doc.paragraphs.map((text) => {
-          const p = document.createElement('p');
-          p.textContent = text;
-          return p;
-        })
-      );
-      setModal(true);
+      openDoc(trigger);
       return;
     }
     if (event.target.closest('[data-close]')) setModal(false);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    const trigger = event.target.closest?.('[data-doc]');
+    if (!trigger) return;
+    event.preventDefault();
+    openDoc(trigger);
+  });
+
+  // Tab циклится внутри модалки (фон и так inert)
+  docModal.addEventListener('keydown', (event) => {
+    if (event.key !== 'Tab') return;
+    const items = [
+      ...docModal.querySelectorAll('button, [href], input, select, textarea, [tabindex="0"]'),
+    ];
+    if (!items.length) return;
+    event.preventDefault();
+    const idx = items.indexOf(document.activeElement);
+    const next = event.shiftKey
+      ? idx <= 0
+        ? items.length - 1
+        : idx - 1
+      : (idx + 1) % items.length;
+    items[next].focus();
   });
 
   addEventListener('keydown', (event) => {
