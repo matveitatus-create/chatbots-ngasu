@@ -232,7 +232,7 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
 .card span { font-size: 14px; line-height: 1.5; opacity: .75; }
 
 /* Титульник реферата на интро-сцене */
-.title-card { max-width: 470px; gap: 3px; padding: 14px 18px; backdrop-filter: blur(14px); }
+.title-card { max-width: 470px; gap: 3px; padding: 14px 18px; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
 .title-card b { font-size: 14px; margin: 3px 0; }
 .title-card span { font-size: 12px; }
 
@@ -481,7 +481,7 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
   backdrop-filter: blur(18px) saturate(1.2);
 }
 
-.chips-row span, .chat-chips button, .sound-toggle, .voice-toggle { backdrop-filter: blur(8px); }
+.chips-row span, .chat-chips button, .sound-toggle, .voice-toggle { -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
 
 .finish-picker { background: #00000040; border-radius: 999px; gap: 4px; padding: 4px; }
 .finish-picker button { border: 1px solid #0000; border-radius: 999px; flex: 1; padding: 8px 12px; }
@@ -500,7 +500,7 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
 .chapter-nav span, .chapter-nav a[aria-current] span { border: 0; }
 .chapter-nav a[aria-current] { background: var(--glass-selected); color: var(--glass-selected-text); }
 
-input[type="range"] { appearance: none; --fill: 50%; outline-offset: 1px; width: 100%; min-height: 44px; cursor: pointer; background: 0 0; grid-column: 1 / -1; margin: 0; }
+input[type="range"] { -webkit-appearance: none; appearance: none; --fill: 50%; outline-offset: 1px; width: 100%; min-height: 44px; cursor: pointer; background: 0 0; grid-column: 1 / -1; margin: 0; }
 input[type="range"]::-webkit-slider-runnable-track {
   background: linear-gradient(to right, var(--glass-text) var(--fill), #85877e var(--fill));
   border-radius: 999px; height: 4px;
@@ -534,7 +534,7 @@ input[type="range"]::-moz-range-thumb {
 /* ============ Модалка с полным текстом из реферата ============ */
 .doc-modal { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 18px; }
 .doc-modal[hidden] { display: none; }
-.doc-modal-backdrop { position: absolute; inset: 0; background: #17171699; backdrop-filter: blur(6px); }
+.doc-modal-backdrop { position: absolute; inset: 0; background: #17171699; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
 .doc-modal-window {
   position: relative; width: min(640px, 100%); max-height: min(80dvh, 720px);
   overflow-y: auto; overscroll-behavior: contain;
@@ -706,5 +706,5 @@ html:not(.paged) .chapter { min-height: 850px; padding: 90px var(--pad) 70px; }
   .chapter-nav a[aria-current], button[aria-pressed="true"] {
     outline-offset: -3px; outline: 2px solid highlight;
   }
-  input[type="range"] { appearance: auto; }
+  input[type="range"] { -webkit-appearance: auto; appearance: auto; }
 }
