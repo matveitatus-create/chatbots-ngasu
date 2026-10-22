@@ -43,6 +43,7 @@ node scripts/test-live.mjs    # задеплоенный сайт на стат�
 node scripts/audit.mjs        # замеры: кегли, тач-таргеты, FPS, overflow (1440/768/390)
 node scripts/check-a11y.mjs   # клавиатура, фокус и демо-чат на мобильном
 node scripts/check-console.mjs # консоль: ошибки/предупреждения при обходе глав
+node scripts/check-light.mjs  # слайдер «Свет» (глава 06): кадры -90/0/+90 различаются
 node scripts/shots-chapters.mjs [id...]  # десктоп-скриншоты глав (VW/VH — размер окна)
 node scripts/shots-extra.mjs  # модалка (десктоп/мобайл) и планшет 768
 node scripts/shot-og.mjs      # обложка og:image 1200x630 в public/og-cover.png
@@ -77,6 +78,7 @@ scripts/
   audit.mjs         — замеры дизайна (кегли/тач-таргеты/FPS/overflow)
   check-a11y.mjs    — клавиатура, фокус, демо-чат на мобильном
   check-console.mjs — ошибки/предупреждения консоли при обходе глав
+  check-light.mjs   — слайдер «Свет»: пиксельное сравнение кадров -90/0/+90
   shots-chapters.mjs— десктоп-скриншоты глав (размер через env VW/VH)
   shots-extra.mjs   — модалка (десктоп/мобайл) и планшет 768
   shot-og.mjs       — обложка og:image 1200x630 из живой сцены
