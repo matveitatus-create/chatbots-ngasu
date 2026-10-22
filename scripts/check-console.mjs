@@ -23,5 +23,19 @@ for (const id of ids) {
 await page.click('[data-doc="object"]').catch(() => {});
 await page.waitForTimeout(400);
 await page.keyboard.press('Escape');
+// демо-чат: свободный вопрос прогоняет сетевую цепочку ИИ
+await page.evaluate(() => { location.hash = 'demo'; });
+await page.waitForTimeout(900);
+await page.fill('.chat-form input', 'Что такое RAG?');
+await page.press('.chat-form input', 'Enter');
+await page.waitForFunction(
+  () => {
+    const msgs = [...document.querySelectorAll('.msg')];
+    const last = msgs[msgs.length - 1];
+    return msgs.length > 2 && last && !last.classList.contains('typing') && last.textContent.trim();
+  },
+  { timeout: 45000 }
+).catch(() => lines.push('chat: ответ не дождался'));
+await page.waitForTimeout(500);
 console.log('CONSOLE ISSUES:', lines.length ? lines : 'none');
 await browser.close();

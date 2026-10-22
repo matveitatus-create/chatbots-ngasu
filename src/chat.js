@@ -146,10 +146,14 @@ async function askModel(question, personaId, onToken = () => {}) {
     return null;
   })();
 
-  const answer =
+  let streamed = false;
+  const chain = async () =>
     (await Promise.any([
       want(local),
-      want(askStream(system, question, onToken)),
+      want(askStream(system, question, (text) => {
+        streamed = true;
+        onToken(text);
+      })),
     ]).catch(() => null)) ??
     // 3) Напрямую из браузера и публичные CORS-прокси — все сразу
     (await Promise.any([
@@ -162,6 +166,11 @@ async function askModel(question, personaId, onToken = () => {}) {
       want(fetchText(target, 15000)),
       want(fetchText(PROXIES[0](target), 20000)),
     ]).catch(() => null)));
+
+  // Общий дедлайн: зависшие прокси не держат пользователя дольше 25 секунд;
+  // если стриминг уже пошёл, дедлайн молчит и цепочка доводит ответ сама.
+  const deadline = sleep(25000).then(() => (streamed ? new Promise(() => {}) : null));
+  const answer = await Promise.race([chain(), deadline]);
 
   if (answer) {
     try { sessionStorage.setItem(cacheKey, answer); } catch { /* без кэша */ }
