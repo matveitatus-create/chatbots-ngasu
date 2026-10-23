@@ -556,7 +556,7 @@ input[type="range"]::-moz-range-thumb {
 }
 .doc-modal-source {
   display: block; margin-top: 14px; padding-top: 10px;
-  border-top: 1px solid #17171618; font-size: 12px; opacity: .55;
+  border-top: 1px solid #17171618; font-size: 12px; opacity: .65;
 }
 
 /* ============ Адаптив ============ */
