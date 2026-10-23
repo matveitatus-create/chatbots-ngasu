@@ -19,6 +19,9 @@ const TEXTS = {
   why: 'Бот — текстовый интерфейс к сложному софту: BIM-модель, нормативка и задачи на стройке — простым человеческим языком.',
 };
 
+// На статическом хостинге локального /api/tts нет — не дёргаем заведомо падающий запрос
+const HAS_LOCAL_API = ['localhost', '127.0.0.1', '::1'].includes(location.hostname);
+
 export class VoiceBox {
   constructor() {
     this.enabled = false;
@@ -68,6 +71,11 @@ export class VoiceBox {
   speakText(text) {
     if (!this.enabled || !text) return;
     this.cancel();
+    // На статике /api/tts нет — сразу системный синтезатор
+    if (!HAS_LOCAL_API) {
+      this._fallbackSpeakText(text);
+      return;
+    }
     const url = `./api/tts?persona=${this.persona.id}&text=${encodeURIComponent(text)}`;
     this._playUrl(url, () => this._fallbackSpeakText(text));
   }

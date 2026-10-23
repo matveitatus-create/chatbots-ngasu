@@ -15,6 +15,9 @@ const WELCOME = 'Привет! Я демо-бот. Спроси про RAG, BIM 
 // публичные CORS-прокси к Pollinations: прокси делает запрос со своего
 // сервера, без браузерного Origin и антибот-токена Turnstile.
 const ASK_URL = './api/ask';
+// На статическом хостинге (GitHub Pages) локального API нет: не делаем
+// заведомо падающий запрос и не загрязняем консоль красной 404.
+const HAS_LOCAL_API = ['localhost', '127.0.0.1', '::1'].includes(location.hostname);
 const OFFLINE_ANSWER = 'Связь с ИИ сейчас барахлит... Попробуй ещё раз — или ткни в готовый вопрос ниже.';
 
 // Те же характеры персонажей, что и в vite.config.js (для прямого запроса).
@@ -126,51 +129,53 @@ async function askModel(question, personaId, onToken = () => {}) {
     location.hostname
   )}`;
 
-  // 1+2) Локальный серверный прокси и прямой запрос из браузера — гонка:
-  // на статике /api/ask отпадает сразу (404), локально обычно выигрывает он.
-  const local = (async () => {
-    try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 75000);
-      const response = await fetch(
-        `${ASK_URL}?persona=${personaId}&q=${encodeURIComponent(question)}`,
-        { signal: controller.signal }
-      );
-      clearTimeout(timer);
-      // На статическом хостинге /api/ask нет — придёт HTML без спец-заголовка
-      if (response.ok && response.headers.get('X-Chatbots-Api')) {
-        const text = (await response.text()).trim();
-        if (text) return text;
-      }
-    } catch { /* офлайн или статика — прямой запрос решит */ }
-    return null;
-  })();
+  // 1+2) Локальный серверный прокси и прямой запрос из браузера — гонка;
+  // на статике локальный участник отключён (там нет /api/ask), локально обычно выигрывает он.
+  const local = HAS_LOCAL_API
+    ? (async () => {
+        try {
+          const controller = new AbortController();
+          const timer = setTimeout(() => controller.abort(), 75000);
+          const response = await fetch(
+            `${ASK_URL}?persona=${personaId}&q=${encodeURIComponent(question)}`,
+            { signal: controller.signal }
+          );
+          clearTimeout(timer);
+          if (response.ok && response.headers.get('X-Chatbots-Api')) {
+            const text = (await response.text()).trim();
+            if (text) return text;
+          }
+        } catch { /* офлайн — прямой запрос решит */ }
+        return null;
+      })()
+    : Promise.resolve(null);
 
   let streamed = false;
-  const chain = async () =>
+  const onTokenLive = (text) => {
+    streamed = true;
+    onToken(text);
+  };
+  // Удалённые маршруты: стрим + прямой + прокси параллельно, затем пауза и повтор
+  const remotes = async () =>
     (await Promise.any([
-      want(local),
-      want(askStream(system, question, (text) => {
-        streamed = true;
-        onToken(text);
-      })),
-    ]).catch(() => null)) ??
-    // 3) Напрямую из браузера и публичные CORS-прокси — все сразу
-    (await Promise.any([
+      want(askStream(system, question, onTokenLive)),
       want(fetchText(target, 15000)),
       ...PROXIES.map((make) => want(fetchText(make(target), 20000))),
     ]).catch(() => null)) ??
-    // 4) Бесплатный тир лимитирует по частоте — короткая пауза и финальная гонка
     ((await sleep(3000)),
     (await Promise.any([
       want(fetchText(target, 15000)),
       want(fetchText(PROXIES[0](target), 20000)),
     ]).catch(() => null)));
 
+  // Локально сначала серверный прокси (интернет не дёргаем — консоль чистая),
+  // на статике — сразу все удалённые маршруты параллельно.
+  const chain = HAS_LOCAL_API ? local.then((v) => v ?? remotes()) : remotes();
+
   // Общий дедлайн: зависшие прокси не держат пользователя дольше 25 секунд;
   // если стриминг уже пошёл, дедлайн молчит и цепочка доводит ответ сама.
   const deadline = sleep(25000).then(() => (streamed ? new Promise(() => {}) : null));
-  const answer = await Promise.race([chain(), deadline]);
+  const answer = await Promise.race([chain, deadline]);
 
   if (answer) {
     try { sessionStorage.setItem(cacheKey, answer); } catch { /* без кэша */ }
