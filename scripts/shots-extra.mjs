@@ -63,5 +63,15 @@ await page.screenshot({
 });
 await page.close();
 
+// Модалка в ландшафте на низком экране
+page = await browser.newPage({ viewport: { width: 844, height: 390 } });
+page.on('pageerror', (e) => errors.push(String(e)));
+await page.goto(TARGET + '#tasks', { waitUntil: 'networkidle' });
+await page.waitForTimeout(1200);
+await page.click('[data-doc="object"]');
+await page.waitForTimeout(600);
+await page.screenshot({ path: `${OUT}/modal-landscape.png` });
+await page.close();
+
 console.log('JS ERRORS:', errors.length ? errors : 'none');
 await browser.close();
