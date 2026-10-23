@@ -242,7 +242,7 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
 .anatomy-sub { margin-top: 20px; max-width: 380px; font-size: 14px; line-height: 1.6; opacity: .75; }
 @media (hover: hover) {
   .parts-list span[data-doc]:hover,
-  .steps-list li[data-doc]:hover b { text-decoration: underline; text-underline-offset: 3px; }
+  .steps-list button[data-doc]:hover b { text-decoration: underline; text-underline-offset: 3px; }
 }
 
 .stats-row {
@@ -273,6 +273,12 @@ h2 { letter-spacing: -.065em; font-size: clamp(42px, 6.4vw, 100px); font-weight:
 }
 .steps-list b { font-weight: 800; flex: none; }
 .steps-list span { opacity: .7; font-size: 12px; }
+/* Нативная кнопка внутри li: список сохраняет семантику, пункт — роль button */
+.steps-list button[data-doc] {
+  display: flex; align-items: baseline; gap: 12px;
+  flex: 1; min-width: 0; margin: 0; padding: 0;
+  background: none; border: 0; font: inherit; color: inherit; text-align: left;
+}
 
 /* ============ Чипы технологий (глава 04) ============ */
 .chips-row {
@@ -626,6 +632,7 @@ input[type="range"]::-moz-range-thumb {
   .chapter-note { font-size: 12px; bottom: 85px; }
   .steps-list { max-width: none; margin-top: 20px; gap: 6px; }
   .steps-list li { font-size: 12px; padding-bottom: 6px; flex-wrap: wrap; }
+  .steps-list button[data-doc] { flex-wrap: wrap; }
   .steps-list span { font-size: 12px; }
   .chips-row { max-width: none; margin-top: 18px; }
   /* Бот на мобайле рисуется под контентом: чипы делаем плотнее, чтобы светлый

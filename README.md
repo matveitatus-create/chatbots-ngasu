@@ -78,7 +78,7 @@ node scripts/check-console.mjs # консоль при обходе глав и 
 node scripts/check-light.mjs   # слайдер «Свет»: кадры -90/0/+90 различаются
 node scripts/check-small.mjs   # крайние форматы: 320x568 и ландшафт 844x390
 node scripts/check-stability.mjs # длинная сессия: узлы DOM и куча не растут от переключений
-node scripts/check-axe.mjs      # полный WCAG-скан axe-core (главная + модалка)
+node scripts/check-axe.mjs      # полный WCAG-скан axe-core: все главы на 1440/390 + модалка
 node scripts/shots-mobile.mjs  # скриншоты мобильной вёрстки
 node scripts/shots-chapters.mjs [id...]  # десктоп-скриншоты глав (VW/VH — размер окна)
 node scripts/shots-extra.mjs   # модалка (десктоп/мобайл/320), планшет 768, фокус-кольцо карточки
