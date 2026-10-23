@@ -79,7 +79,7 @@ node scripts/check-light.mjs   # слайдер «Свет»: кадры -90/0/+
 node scripts/check-small.mjs   # крайние форматы: 320x568 и ландшафт 844x390
 node scripts/shots-mobile.mjs  # скриншоты мобильной вёрстки
 node scripts/shots-chapters.mjs [id...]  # десктоп-скриншоты глав (VW/VH — размер окна)
-node scripts/shots-extra.mjs   # модалка (десктоп/мобайл) и планшет 768
+node scripts/shots-extra.mjs   # модалка (десктоп/мобайл/320), планшет 768, фокус-кольцо карточки
 node scripts/shot-og.mjs       # обложка og:image 1200x630 из живой сцены
 ```
 
