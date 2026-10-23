@@ -134,7 +134,7 @@ export function createPager(chapters, onChange) {
   document.addEventListener('keydown', (event) => {
     if (document.body.classList.contains('modal-open')) return; // модалка: Esc обрабатывает main.js
     if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
-    if (event.target.closest?.('input,textarea,select,button,[contenteditable=true]')) return;
+    if (event.target.closest?.('input,textarea,select,button,[contenteditable=true],[data-doc]')) return;
     const dir = ['ArrowDown', 'PageDown', ' '].includes(event.key)
       ? (event.shiftKey ? -1 : 1)
       : ['ArrowUp', 'PageUp'].includes(event.key) ? -1 : 0;

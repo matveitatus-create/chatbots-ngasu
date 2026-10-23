@@ -62,6 +62,18 @@ for (const vp of [
       () => document.activeElement?.getAttribute('data-doc') ?? document.activeElement?.tagName
     );
     console.log('MODAL TAB INSIDE:', inModal.every(Boolean), '| FOCUS BACK:', back);
+
+    // Space на карточке открывает модалку и НЕ листает главу
+    const hashBefore = await page.evaluate(() => location.hash);
+    await page.keyboard.press('Space');
+    await page.waitForTimeout(400);
+    const space = await page.evaluate(() => ({
+      modal: !document.querySelector('#doc-modal').hidden,
+      hash: location.hash,
+    }));
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+    console.log('MODAL SPACE OPEN:', space.modal, '| глава не сменилась:', space.hash === hashBefore);
   }
 
   // Демо-чат на мобильном: фокус и скролл не ломаются
