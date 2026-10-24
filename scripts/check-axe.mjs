@@ -52,6 +52,30 @@ for (const vp of [
   const mv = await scan(page);
   total += mv.length;
   console.log(`${vp.width} modal:`, mv.length ? JSON.stringify(mv) : 'clean');
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(300);
+
+  // Интерактивные состояния чата: пузыри сообщений и включённые тумблеры
+  if (vp.width === 1440) {
+    await page.evaluate(() => { location.hash = 'demo'; });
+    await page.waitForTimeout(800);
+    await page.evaluate(() => document.querySelector('#chat-chips button')?.click());
+    await page.waitForFunction(() => {
+      const msgs = [...document.querySelectorAll('#chat-log .msg')];
+      const last = msgs[msgs.length - 1];
+      return msgs.length >= 2 && last && !last.classList.contains('typing') && last.textContent.trim();
+    }, null, { timeout: 20000 });
+    const cv = await scan(page);
+    total += cv.length;
+    console.log(`${vp.width} chat+messages:`, cv.length ? JSON.stringify(cv) : 'clean');
+
+    await page.click('#sound-toggle');
+    if (await page.locator('#voice-toggle').isVisible()) await page.click('#voice-toggle');
+    await page.waitForTimeout(400);
+    const tv = await scan(page);
+    total += tv.length;
+    console.log(`${vp.width} toggles-on:`, tv.length ? JSON.stringify(tv) : 'clean');
+  }
   await page.close();
 }
 

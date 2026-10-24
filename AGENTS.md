@@ -46,7 +46,7 @@ node scripts/check-console.mjs # консоль: ошибки/предупреж
 node scripts/check-light.mjs  # слайдер «Свет» (глава 06): кадры -90/0/+90 различаются
 node scripts/check-small.mjs  # крайние форматы: 320x568 и ландшафт 844x390 (overflow, навигация)
 node scripts/check-stability.mjs  # длинная сессия: круги по главам + модалки, узлы DOM и куча не растут
-node scripts/check-axe.mjs  # полный WCAG-скан движком axe-core: все главы на 1440 и 390 + модалка
+node scripts/check-axe.mjs  # полный WCAG-скан движком axe-core: все главы на 1440 и 390, модалка и состояния чата
 node scripts/shots-chapters.mjs [id...]  # десктоп-скриншоты глав (VW/VH — размер окна)
 node scripts/shots-extra.mjs  # модалка (десктоп/мобайл/320), планшет 768, фокус-кольцо карточки
 node scripts/shot-og.mjs      # обложка og:image 1200x630 в public/og-cover.png
@@ -84,7 +84,7 @@ scripts/
   check-light.mjs   — слайдер «Свет»: пиксельное сравнение кадров -90/0/+90
   check-small.mjs   — крайние форматы (320px, ландшафт): overflow глав и геометрия nav
   check-stability.mjs — длинная сессия: узлы DOM и куча после кругов по главам
-  check-axe.mjs     — полный аудит доступности axe-core: все главы на 1440/390 и модалка
+  check-axe.mjs     — полный аудит доступности axe-core: все главы на 1440/390, модалка и состояния чата
   shots-chapters.mjs— десктоп-скриншоты глав (размер через env VW/VH)
   shots-extra.mjs   — модалка (десктоп/мобайл/320), планшет 768, фокус-кольцо карточки
   shot-og.mjs       — обложка og:image 1200x630 из живой сцены
@@ -163,6 +163,8 @@ public/
    модалку. Пункты списков `steps-list` (главы 02, 04) — нативные `<button>`
    внутри `<li>`: список сохраняет семантику `ol/li`, а пункт — роль button
    (у `li` роль button недопустима, axe ловит это правилом aria-allowed-role).
+   Лог чата `#chat-log` — фокусируемая скролл-область (`tabindex="0"`):
+   клавиатурник может прокрутить историю (axe-правило scrollable-region-focusable).
    Пока модалка открыта, соседи по `body` получают `inert`, Tab зациклен
    внутри окна, Esc закрывает и возвращает фокус на карточку-триггер.
 4. **Мобильная вёрстка** — проверяй `scripts/shots-mobile.mjs`; позы робота
