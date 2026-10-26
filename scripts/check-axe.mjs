@@ -26,6 +26,7 @@ let total = 0;
 for (const vp of [
   { width: 1440, height: 900 },
   { width: 390, height: 844 },
+  { width: 844, height: 390 },
 ]) {
   const page = await browser.newPage({ viewport: vp });
   page.on('pageerror', (e) => errors.push(String(e)));
